@@ -1,10 +1,15 @@
 [package]
-name = "rangetools"
-version = "0.1.0"
-edition = "2021"
 authors = ["rory <rjsnively@gmail.com>"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Extending the Rust Range structs found in std::ops"
+documentation = "https://docs.rs/rangetools"
+edition = "2021"
+homepage = "https://github.com/rsnively/rangetools"
+keywords = ["range", "intersection"]
+license = "MIT OR Apache-2.0"
+name = "rangetools"
+readme = "README.md"
+repository = "https://github.com/rsnively/rangetools"
+version = "0.1.0"
 
 [dependencies]
 num-traits = "0.2.14"
