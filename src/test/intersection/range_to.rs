@@ -1,4 +1,4 @@
-use crate::RangeIntersection as _;
+use crate::Rangetools as _;
 
 #[test]
 fn range() {

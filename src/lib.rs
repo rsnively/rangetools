@@ -16,6 +16,13 @@ pub use self::{
 pub trait Rangetools<T> {
     type Inner;
     fn to_inner(self) -> Self::Inner;
+    fn intersection<R, Output>(self, other: R) -> Output
+    where
+        R: Rangetools<T>,
+        Self: Sized + RangeIntersection<R, R::Inner, Output = Output>,
+    {
+        RangeIntersection::intersection(self, other)
+    }
 }
 
 impl<T> Rangetools<T> for std::ops::Range<T> {

@@ -52,6 +52,6 @@ where
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        other.to_inner().intersection(self)
+        RangeIntersection::intersection(other.to_inner(), self)
     }
 }
