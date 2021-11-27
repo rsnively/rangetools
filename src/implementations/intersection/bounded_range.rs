@@ -1,12 +1,16 @@
 use crate::{
-    BoundedRange, FiniteBound, LowerBoundedRange, RangeIntersection, UnboundedRange,
+    BoundedRange, FiniteBound, LowerBoundedRange, RangeIntersection, Rangetools, UnboundedRange,
     UpperBoundedRange,
 };
 
-impl<T: Copy + Ord> RangeIntersection<T, std::ops::Range<T>> for BoundedRange<T> {
+impl<T, R> RangeIntersection<R, BoundedRange<T>> for BoundedRange<T>
+where
+    T: Copy + Ord,
+    R: Rangetools<T, Inner = BoundedRange<T>>,
+{
     type Output = BoundedRange<T>;
-    fn intersection(self, other: std::ops::Range<T>) -> Self::Output {
-        let r: BoundedRange<T> = other.into();
+    fn intersection(self, other: R) -> Self::Output {
+        let r = other.to_inner();
         BoundedRange::new(
             FiniteBound::max_start(self.start_bound(), r.start_bound()),
             FiniteBound::min_end(self.end_bound(), r.end_bound()),
@@ -14,87 +18,40 @@ impl<T: Copy + Ord> RangeIntersection<T, std::ops::Range<T>> for BoundedRange<T>
     }
 }
 
-impl<T: Copy + Ord> RangeIntersection<T, std::ops::RangeFrom<T>> for BoundedRange<T> {
+impl<T, R> RangeIntersection<R, LowerBoundedRange<T>> for BoundedRange<T>
+where
+    T: Copy + Ord,
+    R: Rangetools<T, Inner = LowerBoundedRange<T>>,
+{
     type Output = BoundedRange<T>;
-    fn intersection(self, other: std::ops::RangeFrom<T>) -> Self::Output {
-        let r: LowerBoundedRange<T> = other.into();
+    fn intersection(self, other: R) -> Self::Output {
         BoundedRange::new(
-            FiniteBound::max_start(self.start_bound(), r.start_bound()),
+            FiniteBound::max_start(self.start_bound(), other.to_inner().start_bound()),
             self.end_bound(),
         )
     }
 }
 
-impl<T> RangeIntersection<T, std::ops::RangeFull> for BoundedRange<T> {
+impl<T, R> RangeIntersection<R, UpperBoundedRange<T>> for BoundedRange<T>
+where
+    T: Copy + Ord,
+    R: Rangetools<T, Inner = UpperBoundedRange<T>>,
+{
     type Output = BoundedRange<T>;
-    fn intersection(self, _: std::ops::RangeFull) -> Self::Output {
-        self
-    }
-}
-
-impl<T: Copy + Ord> RangeIntersection<T, std::ops::RangeInclusive<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, other: std::ops::RangeInclusive<T>) -> Self::Output {
-        let r: BoundedRange<T> = other.into();
-        BoundedRange::new(
-            FiniteBound::max_start(self.start_bound(), r.start_bound()),
-            FiniteBound::min_end(self.end_bound(), r.end_bound()),
-        )
-    }
-}
-
-impl<T: Copy + Ord> RangeIntersection<T, std::ops::RangeTo<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, other: std::ops::RangeTo<T>) -> Self::Output {
-        let r: UpperBoundedRange<T> = other.into();
+    fn intersection(self, other: R) -> Self::Output {
         BoundedRange::new(
             self.start_bound(),
-            FiniteBound::min_end(self.end_bound(), r.end_bound()),
+            FiniteBound::min_end(self.end_bound(), other.to_inner().end_bound()),
         )
     }
 }
 
-impl<T: Copy + Ord> RangeIntersection<T, std::ops::RangeToInclusive<T>> for BoundedRange<T> {
+impl<T, R> RangeIntersection<R, UnboundedRange<T>> for BoundedRange<T>
+where
+    R: Rangetools<T, Inner = UnboundedRange<T>>,
+{
     type Output = BoundedRange<T>;
-    fn intersection(self, other: std::ops::RangeToInclusive<T>) -> Self::Output {
-        let r: UpperBoundedRange<T> = other.into();
-        BoundedRange::new(
-            self.start_bound(),
-            FiniteBound::min_end(self.end_bound(), r.end_bound()),
-        )
-    }
-}
-
-impl<T: Copy + Ord> RangeIntersection<T, BoundedRange<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, other: BoundedRange<T>) -> Self::Output {
-        BoundedRange::new(
-            FiniteBound::max_start(self.start_bound(), other.start_bound()),
-            FiniteBound::min_end(self.end_bound(), other.end_bound()),
-        )
-    }
-}
-impl<T: Copy + Ord> RangeIntersection<T, LowerBoundedRange<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, other: LowerBoundedRange<T>) -> Self::Output {
-        BoundedRange::new(
-            FiniteBound::max_start(self.start_bound(), other.start_bound()),
-            self.end_bound(),
-        )
-    }
-}
-impl<T: Copy + Ord> RangeIntersection<T, UpperBoundedRange<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, other: UpperBoundedRange<T>) -> Self::Output {
-        BoundedRange::new(
-            self.start_bound(),
-            FiniteBound::min_end(self.end_bound(), other.end_bound()),
-        )
-    }
-}
-impl<T> RangeIntersection<T, UnboundedRange<T>> for BoundedRange<T> {
-    type Output = BoundedRange<T>;
-    fn intersection(self, _: UnboundedRange<T>) -> Self::Output {
-        self
+    fn intersection(self, other: R) -> Self::Output {
+        other.to_inner().intersection(self)
     }
 }
