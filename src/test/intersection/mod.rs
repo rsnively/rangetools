@@ -9,3 +9,8 @@ mod bounded_range;
 mod lower_bounded_range;
 mod unbounded_range;
 mod upper_bounded_range;
+
+mod bounded_set;
+mod lower_bounded_set;
+mod unbounded_set;
+mod upper_bounded_set;

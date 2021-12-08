@@ -1,12 +1,12 @@
 use crate::{
-    BoundedRange, FiniteBound, LowerBoundedRange, RangeIntersection, Rangetools, UnboundedRange,
-    UpperBoundedRange,
+    BoundedRange, BoundedSet, FiniteBound, LowerBoundedRange, LowerBoundedSet, RangeIntersection,
+    Rangetools, UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
 };
 
 impl<T, R> RangeIntersection<R, BoundedRange<T>> for BoundedRange<T>
 where
+    R: Rangetools<Inner = BoundedRange<T>>,
     T: Copy + Ord,
-    R: Rangetools<T, Inner = BoundedRange<T>>,
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
@@ -18,10 +18,21 @@ where
     }
 }
 
+impl<T, R> RangeIntersection<R, BoundedSet<T>> for BoundedRange<T>
+where
+    R: Rangetools<Inner = BoundedSet<T>>,
+    T: Copy + Ord,
+{
+    type Output = BoundedSet<T>;
+    fn intersection(self, other: R) -> Self::Output {
+        RangeIntersection::intersection(other.to_inner(), self)
+    }
+}
+
 impl<T, R> RangeIntersection<R, LowerBoundedRange<T>> for BoundedRange<T>
 where
+    R: Rangetools<Inner = LowerBoundedRange<T>>,
     T: Copy + Ord,
-    R: Rangetools<T, Inner = LowerBoundedRange<T>>,
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
@@ -32,10 +43,21 @@ where
     }
 }
 
+impl<T, R> RangeIntersection<R, LowerBoundedSet<T>> for BoundedRange<T>
+where
+    R: Rangetools<Inner = LowerBoundedSet<T>>,
+    T: Copy + Ord,
+{
+    type Output = BoundedSet<T>;
+    fn intersection(self, other: R) -> Self::Output {
+        RangeIntersection::intersection(other.to_inner(), self)
+    }
+}
+
 impl<T, R> RangeIntersection<R, UpperBoundedRange<T>> for BoundedRange<T>
 where
+    R: Rangetools<Inner = UpperBoundedRange<T>>,
     T: Copy + Ord,
-    R: Rangetools<T, Inner = UpperBoundedRange<T>>,
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
@@ -46,11 +68,34 @@ where
     }
 }
 
-impl<T, R> RangeIntersection<R, UnboundedRange<T>> for BoundedRange<T>
+impl<T, R> RangeIntersection<R, UpperBoundedSet<T>> for BoundedRange<T>
 where
-    R: Rangetools<T, Inner = UnboundedRange<T>>,
+    R: Rangetools<Inner = UpperBoundedSet<T>>,
+    T: Copy + Ord,
+{
+    type Output = BoundedSet<T>;
+    fn intersection(self, other: R) -> Self::Output {
+        RangeIntersection::intersection(other.to_inner(), self)
+    }
+}
+
+impl<T, R> RangeIntersection<R, UnboundedRange> for BoundedRange<T>
+where
+    R: Rangetools<Inner = UnboundedRange>,
+    T: Copy + Ord,
 {
     type Output = BoundedRange<T>;
+    fn intersection(self, other: R) -> Self::Output {
+        RangeIntersection::intersection(other.to_inner(), self)
+    }
+}
+
+impl<T, R> RangeIntersection<R, UnboundedSet<T>> for BoundedRange<T>
+where
+    R: Rangetools<Inner = UnboundedSet<T>>,
+    T: Copy + Ord,
+{
+    type Output = BoundedSet<T>;
     fn intersection(self, other: R) -> Self::Output {
         RangeIntersection::intersection(other.to_inner(), self)
     }

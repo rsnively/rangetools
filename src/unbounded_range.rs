@@ -1,20 +1,14 @@
-use std::marker::PhantomData;
-
 #[derive(Clone, Copy, Debug)]
-pub struct UnboundedRange<T> {
-    data: PhantomData<T>,
-}
+pub struct UnboundedRange {}
 
-impl<T> From<std::ops::RangeFull> for UnboundedRange<T> {
+impl From<std::ops::RangeFull> for UnboundedRange {
     fn from(_: std::ops::RangeFull) -> Self {
-        Self {
-            data: Default::default(),
-        }
+        Self {}
     }
 }
 
-impl<T> UnboundedRange<T> {
-    pub fn contains(&self, _: T) -> bool {
+impl UnboundedRange {
+    pub fn contains<T>(&self, _: T) -> bool {
         true
     }
 

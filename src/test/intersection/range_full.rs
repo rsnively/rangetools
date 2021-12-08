@@ -117,3 +117,57 @@ fn unbounded_range() {
     assert!(i.contains(4));
     assert!(!i.is_empty());
 }
+
+#[test]
+fn bounded_set() {
+    let r = (1..2).union(3..4);
+    let i = (..).intersection(r);
+    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 3]);
+    assert!(!i.contains(0));
+    assert!(i.contains(1));
+    assert!(!i.contains(2));
+    assert!(i.contains(3));
+    assert!(!i.contains(4));
+    assert!(!i.is_empty());
+    let r2 = (1..1).union(5..5);
+    assert!((..).intersection(r2).is_empty());
+}
+
+#[test]
+fn lower_bounded_set() {
+    let s = (3..).union(0..2);
+    let i = (..).intersection(s);
+    assert_eq!(i.clone().take(3).collect::<Vec<_>>(), vec![0, 1, 3]);
+    assert!(i.contains(0));
+    assert!(i.contains(1));
+    assert!(!i.contains(2));
+    assert!(i.contains(3));
+    assert!(i.contains(4));
+    assert!(!i.is_empty());
+}
+
+#[test]
+fn upper_bounded_set() {
+    let s = (..3).union(4..5);
+    let i = (..).intersection(s);
+    assert!(i.contains(0));
+    assert!(i.contains(1));
+    assert!(i.contains(2));
+    assert!(!i.contains(3));
+    assert!(i.contains(4));
+    assert!(!i.contains(5));
+    assert!(!i.is_empty());
+}
+
+#[test]
+fn unbounded_set() {
+    let s = (2..3).union(..1).union(4..);
+    let i = (..).intersection(s);
+    assert!(i.contains(0));
+    assert!(!i.contains(1));
+    assert!(i.contains(2));
+    assert!(!i.contains(3));
+    assert!(i.contains(4));
+    assert!(i.contains(5));
+    assert!(!i.is_empty());
+}

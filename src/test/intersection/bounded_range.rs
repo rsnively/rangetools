@@ -163,3 +163,71 @@ fn unbounded_range() {
     let r3 = (1..3).intersection(5..10);
     assert!(r3.intersection(..).is_empty());
 }
+
+#[test]
+fn bounded_set() {
+    let r = (1..4).intersection(..);
+    let s = (1..2).union(3..4);
+    let i = r.intersection(s);
+    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 3]);
+    assert!(!i.contains(0));
+    assert!(i.contains(1));
+    assert!(!i.contains(2));
+    assert!(i.contains(3));
+    assert!(!i.contains(4));
+    assert!(!i.is_empty());
+    let r2 = (1..1).intersection(..);
+    let s2 = (1..2).union(3..4);
+    assert!(r2.intersection(s2).is_empty());
+}
+
+#[test]
+fn lower_bounded_set() {
+    let r = (1..4).intersection(..);
+    let s = (1..2).union(3..);
+    let i = r.intersection(s);
+    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 3]);
+    assert!(!i.contains(0));
+    assert!(i.contains(1));
+    assert!(!i.contains(2));
+    assert!(i.contains(3));
+    assert!(!i.contains(4));
+    assert!(!i.is_empty());
+    let r2 = (2..3).intersection(..);
+    let s2 = (1..2).union(3..);
+    assert!(r2.intersection(s2).is_empty());
+}
+
+#[test]
+fn upper_bounded_set() {
+    let r = (1..4).intersection(..);
+    let s = (..2).union(3..4);
+    let i = r.intersection(s);
+    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 3]);
+    assert!(!i.contains(0));
+    assert!(i.contains(1));
+    assert!(!i.contains(2));
+    assert!(i.contains(3));
+    assert!(!i.contains(4));
+    assert!(!i.is_empty());
+    let r2 = (1..1).intersection(..);
+    let s2 = (..2).union(3..4);
+    assert!(r2.intersection(s2).is_empty());
+}
+
+#[test]
+fn unbounded_set() {
+    let r = (1..4).to_inner();
+    let s = (..1).union(2..3).union(4..);
+    let i = r.intersection(s);
+    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2]);
+    assert!(!i.contains(0));
+    assert!(!i.contains(1));
+    assert!(i.contains(2));
+    assert!(!i.contains(3));
+    assert!(!i.contains(4));
+    assert!(!i.is_empty());
+    let r2 = (1..1).to_inner();
+    let s2 = (..1).union(2..3).union(4..);
+    assert!(r2.intersection(s2).is_empty());
+}

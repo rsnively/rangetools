@@ -2,7 +2,7 @@ use crate::FiniteBound;
 
 #[derive(Clone, Copy, Debug)]
 pub struct UpperBoundedRange<T> {
-    end: FiniteBound<T>,
+    pub(crate) end: FiniteBound<T>,
 }
 
 impl<T> From<std::ops::RangeTo<T>> for UpperBoundedRange<T> {
