@@ -26,12 +26,6 @@ impl<T: Copy + Ord + std::ops::Add<T, Output = T> + std::ops::AddAssign<T> + num
     }
 }
 
-impl<T> LowerBoundedSet<T> {
-    pub fn is_empty(&self) -> bool {
-        false
-    }
-}
-
 impl<T: Copy + Ord> LowerBoundedSet<T> {
     fn defragment(&mut self) {
         while !self.ranges.is_empty() {

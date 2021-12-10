@@ -1,6 +1,6 @@
 use crate::{
-    Bound, BoundedRange, BoundedSet, LowerBoundedRange, RangeIntersection, UnboundedRange,
-    UpperBoundedRange,
+    Bound, BoundedRange, BoundedSet, LowerBoundedRange, RangeIntersection, Rangetools,
+    UnboundedRange, UpperBoundedRange,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
@@ -67,12 +67,6 @@ impl<T: Copy + Ord> UnboundedSet<T> {
         } else {
             Self::Full
         }
-    }
-}
-
-impl<T> UnboundedSet<T> {
-    pub fn is_empty(&self) -> bool {
-        false
     }
 }
 

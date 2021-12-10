@@ -1,4 +1,4 @@
-use crate::{BoundedRange, RangeRelation};
+use crate::{BoundedRange, RangeRelation, Rangetools};
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
@@ -57,10 +57,6 @@ impl<T: Copy + Ord> BoundedSet<T> {
         for range in other.ranges.into_iter() {
             self.add_range(range);
         }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.ranges.iter().all(|r| r.is_empty())
     }
 
     pub fn contains(&self, t: T) -> bool {

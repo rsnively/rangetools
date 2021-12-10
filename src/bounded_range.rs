@@ -1,4 +1,4 @@
-use crate::Bound;
+use crate::{Bound, Rangetools};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
@@ -44,10 +44,6 @@ impl<T: Copy + Ord> BoundedRange<T> {
     }
     pub fn end_bound(&self) -> Bound<T> {
         self.end
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.start_bound() > self.end_bound()
     }
 
     pub fn contains(&self, t: T) -> bool {

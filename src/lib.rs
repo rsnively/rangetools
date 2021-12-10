@@ -68,6 +68,8 @@ pub use self::{
 };
 
 pub trait Rangetools {
+    fn is_empty(&self) -> bool;
+
     type Inner;
     fn to_inner(self) -> Self::Inner;
     fn intersection<R, Output>(self, other: R) -> Output
@@ -90,6 +92,9 @@ pub trait Rangetools {
 }
 
 impl<T: Copy + Ord> Rangetools for std::ops::Range<T> {
+    fn is_empty(&self) -> bool {
+        self.start >= self.end
+    }
     type Inner = BoundedRange<T>;
     type Set = BoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -100,6 +105,9 @@ impl<T: Copy + Ord> Rangetools for std::ops::Range<T> {
     }
 }
 impl<T: Copy + Ord> Rangetools for std::ops::RangeFrom<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = LowerBoundedRange<T>;
     type Set = LowerBoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -110,6 +118,9 @@ impl<T: Copy + Ord> Rangetools for std::ops::RangeFrom<T> {
     }
 }
 impl Rangetools for std::ops::RangeFull {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = UnboundedRange;
     type Set = UnboundedRange;
     fn to_inner(self) -> Self::Inner {
@@ -120,6 +131,9 @@ impl Rangetools for std::ops::RangeFull {
     }
 }
 impl<T: Copy + Ord> Rangetools for std::ops::RangeInclusive<T> {
+    fn is_empty(&self) -> bool {
+        self.start() > self.end()
+    }
     type Inner = BoundedRange<T>;
     type Set = BoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -130,6 +144,9 @@ impl<T: Copy + Ord> Rangetools for std::ops::RangeInclusive<T> {
     }
 }
 impl<T: Copy + Ord> Rangetools for std::ops::RangeTo<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = UpperBoundedRange<T>;
     type Set = UpperBoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -140,6 +157,9 @@ impl<T: Copy + Ord> Rangetools for std::ops::RangeTo<T> {
     }
 }
 impl<T: Copy + Ord> Rangetools for std::ops::RangeToInclusive<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = UpperBoundedRange<T>;
     type Set = UpperBoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -151,6 +171,9 @@ impl<T: Copy + Ord> Rangetools for std::ops::RangeToInclusive<T> {
 }
 
 impl<T: Copy + Ord> Rangetools for BoundedRange<T> {
+    fn is_empty(&self) -> bool {
+        self.start_bound() > self.end_bound()
+    }
     type Inner = Self;
     type Set = BoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -162,6 +185,9 @@ impl<T: Copy + Ord> Rangetools for BoundedRange<T> {
 }
 
 impl<T> Rangetools for LowerBoundedRange<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = LowerBoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -173,6 +199,9 @@ impl<T> Rangetools for LowerBoundedRange<T> {
 }
 
 impl<T> Rangetools for UpperBoundedRange<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = UpperBoundedSet<T>;
     fn to_inner(self) -> Self::Inner {
@@ -184,6 +213,9 @@ impl<T> Rangetools for UpperBoundedRange<T> {
 }
 
 impl Rangetools for UnboundedRange {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = Self;
     fn to_inner(self) -> Self::Inner {
@@ -194,7 +226,10 @@ impl Rangetools for UnboundedRange {
     }
 }
 
-impl<T> Rangetools for BoundedSet<T> {
+impl<T: Copy + Ord> Rangetools for BoundedSet<T> {
+    fn is_empty(&self) -> bool {
+        self.ranges.iter().all(|r| r.is_empty())
+    }
     type Inner = Self;
     type Set = Self;
     fn to_inner(self) -> Self::Inner {
@@ -206,6 +241,9 @@ impl<T> Rangetools for BoundedSet<T> {
 }
 
 impl<T> Rangetools for LowerBoundedSet<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = Self;
     fn to_inner(self) -> Self::Inner {
@@ -217,6 +255,9 @@ impl<T> Rangetools for LowerBoundedSet<T> {
 }
 
 impl<T> Rangetools for UpperBoundedSet<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = Self;
     fn to_inner(self) -> Self::Inner {
@@ -228,6 +269,9 @@ impl<T> Rangetools for UpperBoundedSet<T> {
 }
 
 impl<T> Rangetools for UnboundedSet<T> {
+    fn is_empty(&self) -> bool {
+        false
+    }
     type Inner = Self;
     type Set = Self;
     fn to_inner(self) -> Self::Inner {

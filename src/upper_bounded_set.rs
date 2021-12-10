@@ -15,12 +15,6 @@ impl<T> From<UpperBoundedRange<T>> for UpperBoundedSet<T> {
     }
 }
 
-impl<T> UpperBoundedSet<T> {
-    pub fn is_empty(&self) -> bool {
-        false
-    }
-}
-
 impl<T: Copy + Ord> UpperBoundedSet<T> {
     fn defragment(&mut self) {
         while !self.ranges.is_empty() {
