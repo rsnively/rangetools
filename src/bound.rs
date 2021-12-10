@@ -1,35 +1,10 @@
-#[derive(Clone, Copy, Debug)]
-pub enum Bound<T> {
-    Unbounded,
-    Bounded(FiniteBound<T>),
-}
-
-impl<T: Copy> From<std::ops::Bound<&T>> for Bound<T> {
-    fn from(b: std::ops::Bound<&T>) -> Self {
-        match b {
-            std::ops::Bound::Unbounded => Self::Unbounded,
-            std::ops::Bound::Excluded(t) => Self::Bounded(FiniteBound::Excluded(*t)),
-            std::ops::Bound::Included(t) => Self::Bounded(FiniteBound::Included(*t)),
-        }
-    }
-}
-
-impl<T: Copy + Ord> Bound<T> {
-    pub fn bounded(&self) -> Option<FiniteBound<T>> {
-        match self {
-            Self::Unbounded => None,
-            Self::Bounded(b) => Some(*b),
-        }
-    }
-}
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum FiniteBound<T> {
+pub enum Bound<T> {
     Excluded(T),
     Included(T),
 }
 
-impl<T: PartialOrd> PartialOrd for FiniteBound<T> {
+impl<T: PartialOrd> PartialOrd for Bound<T> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match (self, other) {
             (Self::Included(a), Self::Included(b)) | (Self::Excluded(a), Self::Excluded(b)) => {
@@ -53,13 +28,13 @@ impl<T: PartialOrd> PartialOrd for FiniteBound<T> {
     }
 }
 
-impl<T: Ord> Ord for FiniteBound<T> {
+impl<T: Ord> Ord for Bound<T> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.partial_cmp(other).unwrap()
     }
 }
 
-impl<T: Copy + std::ops::AddAssign<T>> std::ops::AddAssign<T> for FiniteBound<T> {
+impl<T: Copy + std::ops::AddAssign<T>> std::ops::AddAssign<T> for Bound<T> {
     fn add_assign(&mut self, rhs: T) {
         match self {
             Self::Excluded(t) | Self::Included(t) => *t += rhs,
@@ -67,7 +42,7 @@ impl<T: Copy + std::ops::AddAssign<T>> std::ops::AddAssign<T> for FiniteBound<T>
     }
 }
 
-impl<T: Copy + Ord> FiniteBound<T> {
+impl<T: Copy + Ord> Bound<T> {
     pub fn t(&self) -> T {
         match self {
             Self::Included(t) => *t,

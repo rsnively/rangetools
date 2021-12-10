@@ -1,20 +1,20 @@
-use crate::FiniteBound;
+use crate::Bound;
 
 #[derive(Clone, Copy, Debug)]
 pub struct LowerBoundedRange<T> {
-    pub(crate) start: FiniteBound<T>,
+    pub(crate) start: Bound<T>,
 }
 
 impl<T> From<std::ops::RangeFrom<T>> for LowerBoundedRange<T> {
     fn from(r: std::ops::RangeFrom<T>) -> Self {
         Self {
-            start: FiniteBound::Included(r.start),
+            start: Bound::Included(r.start),
         }
     }
 }
 
 impl<T: Copy + Ord> LowerBoundedRange<T> {
-    pub fn new(start: FiniteBound<T>) -> Self {
+    pub fn new(start: Bound<T>) -> Self {
         Self { start }
     }
 
@@ -26,7 +26,7 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
         t >= self.start.t()
     }
 
-    pub fn start_bound(&self) -> FiniteBound<T> {
+    pub fn start_bound(&self) -> Bound<T> {
         self.start
     }
 }
@@ -38,11 +38,11 @@ where
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
         match self.start {
-            FiniteBound::Excluded(_) => {
+            Bound::Excluded(_) => {
                 self.start += T::one();
                 Some(self.start.t())
             }
-            FiniteBound::Included(t) => {
+            Bound::Included(t) => {
                 self.start += T::one();
                 Some(t)
             }

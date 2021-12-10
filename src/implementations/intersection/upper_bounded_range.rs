@@ -1,5 +1,5 @@
 use crate::{
-    BoundedRange, BoundedSet, FiniteBound, LowerBoundedRange, LowerBoundedSet, RangeIntersection,
+    Bound, BoundedRange, BoundedSet, LowerBoundedRange, LowerBoundedSet, RangeIntersection,
     Rangetools, UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
 };
 
@@ -54,7 +54,7 @@ where
 {
     type Output = UpperBoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        UpperBoundedRange::new(FiniteBound::min_end(
+        UpperBoundedRange::new(Bound::min_end(
             self.end_bound(),
             other.to_inner().end_bound(),
         ))

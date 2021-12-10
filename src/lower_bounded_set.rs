@@ -1,4 +1,4 @@
-use crate::{BoundedRange, BoundedSet, FiniteBound, LowerBoundedRange, Rangetools};
+use crate::{Bound, BoundedRange, BoundedSet, LowerBoundedRange, Rangetools};
 
 #[derive(Clone, Debug)]
 pub struct LowerBoundedSet<T> {
@@ -56,8 +56,7 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
         self.defragment();
     }
     pub(crate) fn add_lower_bounded_range(&mut self, range: LowerBoundedRange<T>) {
-        self.lower_bounded_range.start =
-            FiniteBound::min(self.lower_bounded_range.start, range.start);
+        self.lower_bounded_range.start = Bound::min(self.lower_bounded_range.start, range.start);
         self.defragment();
     }
     pub(crate) fn add_set(&mut self, set: BoundedSet<T>) {

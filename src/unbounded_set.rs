@@ -1,5 +1,5 @@
 use crate::{
-    BoundedRange, BoundedSet, FiniteBound, LowerBoundedRange, RangeIntersection, UnboundedRange,
+    Bound, BoundedRange, BoundedSet, LowerBoundedRange, RangeIntersection, UnboundedRange,
     UpperBoundedRange,
 };
 
@@ -109,14 +109,13 @@ impl<T: Copy + Ord> UnboundedSet<T> {
     }
     pub(crate) fn add_lower_bounded_range(&mut self, range: LowerBoundedRange<T>) {
         self.map_piecewise(|p| {
-            p.lower_bounded_range.start =
-                FiniteBound::min(p.lower_bounded_range.start, range.start);
+            p.lower_bounded_range.start = Bound::min(p.lower_bounded_range.start, range.start);
         });
         self.defragment();
     }
     pub(crate) fn add_upper_bounded_range(&mut self, range: UpperBoundedRange<T>) {
         self.map_piecewise(|p| {
-            p.upper_bounded_range.end = FiniteBound::max(p.upper_bounded_range.end, range.end);
+            p.upper_bounded_range.end = Bound::max(p.upper_bounded_range.end, range.end);
         });
         self.defragment();
     }

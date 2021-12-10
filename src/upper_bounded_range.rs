@@ -1,14 +1,14 @@
-use crate::FiniteBound;
+use crate::Bound;
 
 #[derive(Clone, Copy, Debug)]
 pub struct UpperBoundedRange<T> {
-    pub(crate) end: FiniteBound<T>,
+    pub(crate) end: Bound<T>,
 }
 
 impl<T> From<std::ops::RangeTo<T>> for UpperBoundedRange<T> {
     fn from(r: std::ops::RangeTo<T>) -> Self {
         Self {
-            end: FiniteBound::Excluded(r.end),
+            end: Bound::Excluded(r.end),
         }
     }
 }
@@ -16,13 +16,13 @@ impl<T> From<std::ops::RangeTo<T>> for UpperBoundedRange<T> {
 impl<T> From<std::ops::RangeToInclusive<T>> for UpperBoundedRange<T> {
     fn from(r: std::ops::RangeToInclusive<T>) -> Self {
         Self {
-            end: FiniteBound::Included(r.end),
+            end: Bound::Included(r.end),
         }
     }
 }
 
 impl<T: Copy + Ord> UpperBoundedRange<T> {
-    pub fn new(end: FiniteBound<T>) -> Self {
+    pub fn new(end: Bound<T>) -> Self {
         Self { end }
     }
 
@@ -32,12 +32,12 @@ impl<T: Copy + Ord> UpperBoundedRange<T> {
 
     pub fn contains(&self, t: T) -> bool {
         match self.end {
-            FiniteBound::Excluded(x) => t < x,
-            FiniteBound::Included(i) => t <= i,
+            Bound::Excluded(x) => t < x,
+            Bound::Included(i) => t <= i,
         }
     }
 
-    pub fn end_bound(&self) -> FiniteBound<T> {
+    pub fn end_bound(&self) -> Bound<T> {
         self.end
     }
 }

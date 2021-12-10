@@ -1,4 +1,4 @@
-use crate::{BoundedRange, BoundedSet, FiniteBound, Rangetools, UpperBoundedRange};
+use crate::{Bound, BoundedRange, BoundedSet, Rangetools, UpperBoundedRange};
 
 #[derive(Clone, Debug)]
 pub struct UpperBoundedSet<T> {
@@ -44,7 +44,7 @@ impl<T: Copy + Ord> UpperBoundedSet<T> {
         self.defragment();
     }
     pub(crate) fn add_upper_bounded_range(&mut self, range: UpperBoundedRange<T>) {
-        self.upper_bounded_range.end = FiniteBound::max(self.upper_bounded_range.end, range.end);
+        self.upper_bounded_range.end = Bound::max(self.upper_bounded_range.end, range.end);
         self.defragment();
     }
     pub(crate) fn add_set(&mut self, set: BoundedSet<T>) {
