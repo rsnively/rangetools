@@ -1,6 +1,6 @@
 use crate::{BoundedRange, RangeRelation};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
     pub(crate) ranges: Vec<BoundedRange<T>>,
 }

@@ -1,6 +1,6 @@
 use crate::Bound;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct LowerBoundedRange<T> {
     pub(crate) start: Bound<T>,
 }

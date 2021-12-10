@@ -3,7 +3,7 @@ use crate::{
     UpperBoundedRange,
 };
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct PiecewiseUnboundedSet<T> {
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,
     pub(crate) ranges: BoundedSet<T>,

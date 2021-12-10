@@ -1,6 +1,6 @@
 use crate::{Bound, BoundedRange, BoundedSet, Rangetools, UpperBoundedRange};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct UpperBoundedSet<T> {
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,
     pub(crate) ranges: BoundedSet<T>,

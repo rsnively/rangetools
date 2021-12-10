@@ -1,6 +1,6 @@
 use crate::Bound;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
     pub(crate) start: Bound<T>,
     pub(crate) end: Bound<T>,
@@ -25,7 +25,7 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum RangeRelation {
     Equal,
     Disjoint,
