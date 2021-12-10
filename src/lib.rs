@@ -38,7 +38,9 @@
 //!
 //! let u2 = (1..3).union(10..);
 //! assert_eq!(u2.take(5).collect::<Vec<_>>(), vec![1, 2, 10, 11, 12]);
+//!```
 //!
+//! ```ignored
 //! let u3 = (..5).union(10..);
 //! let v = u3.collect::<Vec<_>>(); // Compiler error! The resulting union does
 //!                                 // not have a lower bound.
