@@ -1,6 +1,6 @@
 use crate::{
-    Bound, BoundedRange, BoundedSet, LowerBoundedRange, LowerBoundedSet, RangeIntersection,
-    Rangetools, UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
+    BoundedRange, BoundedSet, LowerBoundedRange, LowerBoundedSet, RangeIntersection, Rangetools,
+    UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
 };
 
 impl<T, R> RangeIntersection<R, BoundedRange<T>> for LowerBoundedRange<T>
