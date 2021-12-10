@@ -42,37 +42,11 @@ impl<T: Copy + std::ops::AddAssign<T>> std::ops::AddAssign<T> for Bound<T> {
     }
 }
 
-impl<T: Copy + Ord> Bound<T> {
+impl<T: Copy> Bound<T> {
     pub fn t(&self) -> T {
         match self {
             Self::Included(t) => *t,
             Self::Excluded(t) => *t,
-        }
-    }
-    pub(crate) fn max_start(a: Self, b: Self) -> Self {
-        match (a, b) {
-            (Self::Excluded(a), Self::Excluded(b)) => Self::Excluded(a.max(b)),
-            (Self::Included(a), Self::Included(b)) => Self::Included(a.max(b)),
-            (Self::Included(i), Self::Excluded(x)) | (Self::Excluded(x), Self::Included(i)) => {
-                if i > x {
-                    Self::Included(i)
-                } else {
-                    Self::Excluded(x)
-                }
-            }
-        }
-    }
-    pub(crate) fn min_end(a: Self, b: Self) -> Self {
-        match (a, b) {
-            (Self::Excluded(a), Self::Excluded(b)) => Self::Excluded(a.min(b)),
-            (Self::Included(a), Self::Included(b)) => Self::Included(a.min(b)),
-            (Self::Included(i), Self::Excluded(x)) | (Self::Excluded(x), Self::Included(i)) => {
-                if i < x {
-                    Self::Included(i)
-                } else {
-                    Self::Excluded(x)
-                }
-            }
         }
     }
 }
