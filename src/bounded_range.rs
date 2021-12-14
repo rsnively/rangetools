@@ -1,4 +1,4 @@
-use crate::{Bound, Rangetools};
+use crate::{Bound, Rangetools, Step};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
@@ -95,41 +95,25 @@ impl<T: Copy + Ord> BoundedRange<T> {
 
 impl<T> Iterator for BoundedRange<T>
 where
-    T: Copy + Ord + std::ops::AddAssign<T> + std::ops::Add<T, Output = T> + num_traits::One,
+    T: Copy + Ord + Step,
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        match (self.start, self.end) {
-            (Bound::Included(start), Bound::Included(end)) => {
-                if start > end {
+        match self.start {
+            Bound::Included(t) => {
+                if self.start > self.end {
                     None
                 } else {
-                    self.start += T::one();
-                    Some(start)
+                    self.start = self.start.map(T::next);
+                    Some(t)
                 }
             }
-            (Bound::Included(start), Bound::Excluded(end)) => {
-                if start >= end {
+            Bound::Excluded(t) => {
+                if self.start >= self.end {
                     None
                 } else {
-                    self.start += T::one();
-                    Some(start)
-                }
-            }
-            (Bound::Excluded(start), Bound::Included(end)) => {
-                if start >= end {
-                    None
-                } else {
-                    self.start += T::one();
-                    Some(self.start.t())
-                }
-            }
-            (Bound::Excluded(start), Bound::Excluded(end)) => {
-                if start + T::one() >= end {
-                    None
-                } else {
-                    self.start += T::one();
-                    Some(self.start.t())
+                    self.start = self.start.map(T::next);
+                    Some(t.next())
                 }
             }
         }

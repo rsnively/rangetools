@@ -1,3 +1,8 @@
+/// Endpoints of a closed range.
+///
+/// A replacement for [`std::ops::Bound`], which can be unwieldy with copy types. More significantly,
+/// it codifies the closed nature of the bounds in the type system for tracking whether a range is
+/// iterable or not.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Bound<T> {
     Excluded(T),
@@ -34,19 +39,24 @@ impl<T: Ord> Ord for Bound<T> {
     }
 }
 
-impl<T: Copy + std::ops::AddAssign<T>> std::ops::AddAssign<T> for Bound<T> {
-    fn add_assign(&mut self, rhs: T) {
+impl<T> Bound<T> {
+    /// Maps a `Bound<T>` to a `Bound<U>` by applying a function to the contained value.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Bound;
+    ///
+    /// let b1 = Bound::Included(3);
+    /// let b2 = b1.map(|n| n + 1);
+    /// assert_eq!(b2, Bound::Included(4));
+    /// ```
+    pub fn map<U, F>(self, f: F) -> Bound<U>
+    where
+        F: FnOnce(T) -> U,
+    {
         match self {
-            Self::Excluded(t) | Self::Included(t) => *t += rhs,
-        }
-    }
-}
-
-impl<T: Copy> Bound<T> {
-    pub fn t(&self) -> T {
-        match self {
-            Self::Included(t) => *t,
-            Self::Excluded(t) => *t,
+            Self::Excluded(t) => Bound::Excluded(f(t)),
+            Self::Included(t) => Bound::Included(f(t)),
         }
     }
 }

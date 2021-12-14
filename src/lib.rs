@@ -53,6 +53,7 @@ mod implementations;
 mod intersection;
 mod lower_bounded_range;
 mod lower_bounded_set;
+mod step;
 #[cfg(test)]
 mod test;
 mod unbounded_range;
@@ -63,8 +64,8 @@ mod upper_bounded_set;
 
 pub use self::{
     bound::*, bounded_range::*, bounded_set::*, intersection::*, lower_bounded_range::*,
-    lower_bounded_set::*, unbounded_range::*, unbounded_set::*, union::*, upper_bounded_range::*,
-    upper_bounded_set::*,
+    lower_bounded_set::*, step::*, unbounded_range::*, unbounded_set::*, union::*,
+    upper_bounded_range::*, upper_bounded_set::*,
 };
 
 pub trait Rangetools {

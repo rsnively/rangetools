@@ -1,4 +1,4 @@
-use crate::{BoundedRange, RangeRelation, Rangetools};
+use crate::{BoundedRange, RangeRelation, Rangetools, Step};
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
@@ -15,9 +15,7 @@ impl<T: Copy + Ord> From<BoundedRange<T>> for BoundedSet<T> {
     }
 }
 
-impl<T: Copy + Ord + std::ops::Add<T, Output = T> + std::ops::AddAssign<T> + num_traits::One>
-    Iterator for BoundedSet<T>
-{
+impl<T: Copy + Ord + Step> Iterator for BoundedSet<T> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
         let ret = self.ranges.first_mut().map(|r| r.next()).flatten();

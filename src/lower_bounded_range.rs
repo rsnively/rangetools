@@ -1,4 +1,4 @@
-use crate::Bound;
+use crate::{Bound, Step};
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct LowerBoundedRange<T> {
@@ -23,7 +23,10 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
     }
 
     pub fn contains(&self, t: T) -> bool {
-        t >= self.start.t()
+        match self.start {
+            Bound::Excluded(x) => t > x,
+            Bound::Included(i) => t >= i,
+        }
     }
 
     pub fn start_bound(&self) -> Bound<T> {
@@ -33,17 +36,17 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
 
 impl<T> Iterator for LowerBoundedRange<T>
 where
-    T: Copy + Ord + std::ops::AddAssign<T> + num_traits::One,
+    T: Copy + Ord + Step,
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
         match self.start {
-            Bound::Excluded(_) => {
-                self.start += T::one();
-                Some(self.start.t())
+            Bound::Excluded(t) => {
+                self.start = self.start.map(T::next);
+                Some(t.next())
             }
             Bound::Included(t) => {
-                self.start += T::one();
+                self.start = self.start.map(T::next);
                 Some(t)
             }
         }
