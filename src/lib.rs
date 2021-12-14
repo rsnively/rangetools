@@ -81,6 +81,15 @@ pub trait Rangetools {
         RangeIntersection::intersection(self, other)
     }
 
+    fn disjoint<R, Output>(self, other: R) -> bool
+    where
+        R: Rangetools,
+        Output: Rangetools,
+        Self: Sized + RangeIntersection<R, R::Inner, Output = Output>,
+    {
+        Rangetools::intersection(self, other).is_empty()
+    }
+
     type Set;
     fn to_set(self) -> Self::Set;
     fn union<R, Output>(self, other: R) -> Output

@@ -1,4 +1,4 @@
-use crate::{BoundedRange, RangeRelation, Rangetools, Step};
+use crate::{BoundedRange, Rangetools, Step};
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
@@ -33,11 +33,7 @@ impl<T> BoundedSet<T> {
 impl<T: Copy + Ord> BoundedSet<T> {
     pub(crate) fn add_range(&mut self, r: BoundedRange<T>) {
         if !r.is_empty() {
-            if let Some(index) = self
-                .ranges
-                .iter()
-                .position(|range| range.relation(&r) != RangeRelation::Disjoint)
-            {
+            if let Some(index) = self.ranges.iter().position(|range| !range.disjoint(r)) {
                 let new_range = r.combine(&self.ranges[index]);
                 self.ranges.remove(index);
                 self.add_range(new_range);

@@ -25,15 +25,6 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
-pub enum RangeRelation {
-    Equal,
-    Disjoint,
-    Contains,
-    Contained,
-    Overlap,
-}
-
 impl<T: Copy + Ord> BoundedRange<T> {
     pub fn new(start: Bound<T>, end: Bound<T>) -> Self {
         Self { start, end }
@@ -58,26 +49,6 @@ impl<T: Copy + Ord> BoundedRange<T> {
         start_satisfied && end_satisfied
     }
 
-    pub fn relation(&self, other: &Self) -> RangeRelation {
-        if other.is_empty() {
-            RangeRelation::Contains
-        } else if self.is_empty() {
-            RangeRelation::Contained
-        } else if self == other {
-            RangeRelation::Equal
-        } else if self.end_bound() < other.start_bound() || other.end_bound() < self.start_bound() {
-            RangeRelation::Disjoint
-        } else if self.start_bound() <= other.start_bound() && self.end_bound() >= other.end_bound()
-        {
-            RangeRelation::Contains
-        } else if self.start_bound() >= other.start_bound() && self.end_bound() <= other.end_bound()
-        {
-            RangeRelation::Contained
-        } else {
-            RangeRelation::Overlap
-        }
-    }
-
     pub fn combine(&self, other: &Self) -> Self {
         if other.is_empty() {
             return self.clone();
@@ -85,7 +56,7 @@ impl<T: Copy + Ord> BoundedRange<T> {
         if self.is_empty() {
             return other.clone();
         }
-        assert!(self.relation(other) != RangeRelation::Disjoint);
+        assert!(!self.disjoint(*other));
         BoundedRange::new(
             Bound::min(self.start_bound(), other.start_bound()),
             Bound::max(self.end_bound(), other.end_bound()),
