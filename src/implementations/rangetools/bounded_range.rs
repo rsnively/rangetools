@@ -2,7 +2,7 @@ use crate::{BoundedRange, BoundedSet, Rangetools};
 
 impl<T: Copy + Ord> Rangetools for BoundedRange<T> {
     fn is_empty(&self) -> bool {
-        self.start_bound() > self.end_bound()
+        self.start > self.end
     }
 
     type Inner = Self;

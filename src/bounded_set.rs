@@ -41,7 +41,7 @@ impl<T: Copy + Ord> BoundedSet<T> {
                 let index = self
                     .ranges
                     .iter()
-                    .position(|range| range.start_bound() > r.end_bound())
+                    .position(|range| range.start > r.end)
                     .unwrap_or(self.ranges.len());
                 self.ranges.insert(index, r);
             }

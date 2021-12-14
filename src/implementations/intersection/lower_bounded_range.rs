@@ -32,7 +32,7 @@ where
 {
     type Output = LowerBoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        LowerBoundedRange::new(self.start_bound().max(other.to_inner().start_bound()))
+        LowerBoundedRange::new(self.start.max(other.to_inner().start))
     }
 }
 
@@ -54,7 +54,7 @@ where
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        BoundedRange::new(self.start_bound(), other.to_inner().end_bound())
+        BoundedRange::new(self.start, other.to_inner().end)
     }
 }
 

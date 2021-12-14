@@ -2,7 +2,7 @@ use crate::{Bound, Step};
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct LowerBoundedRange<T> {
-    pub(crate) start: Bound<T>,
+    pub start: Bound<T>,
 }
 
 impl<T> From<std::ops::RangeFrom<T>> for LowerBoundedRange<T> {
@@ -18,19 +18,11 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
         Self { start }
     }
 
-    pub fn is_empty(&self) -> bool {
-        false
-    }
-
     pub fn contains(&self, t: T) -> bool {
         match self.start {
             Bound::Excluded(x) => t > x,
             Bound::Included(i) => t >= i,
         }
-    }
-
-    pub fn start_bound(&self) -> Bound<T> {
-        self.start
     }
 }
 

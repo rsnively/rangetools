@@ -54,7 +54,7 @@ where
 {
     type Output = UpperBoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        UpperBoundedRange::new(self.end_bound().min(other.to_inner().end_bound()))
+        UpperBoundedRange::new(self.end.min(other.to_inner().end))
     }
 }
 

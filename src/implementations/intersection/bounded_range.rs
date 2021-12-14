@@ -11,10 +11,7 @@ where
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
         let other = other.to_inner();
-        BoundedRange::new(
-            self.start_bound().max(other.start_bound()),
-            self.end_bound().min(other.end_bound()),
-        )
+        BoundedRange::new(self.start.max(other.start), self.end.min(other.end))
     }
 }
 
@@ -36,10 +33,7 @@ where
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        BoundedRange::new(
-            self.start_bound().max(other.to_inner().start_bound()),
-            self.end_bound(),
-        )
+        BoundedRange::new(self.start.max(other.to_inner().start), self.end)
     }
 }
 
@@ -61,10 +55,7 @@ where
 {
     type Output = BoundedRange<T>;
     fn intersection(self, other: R) -> Self::Output {
-        BoundedRange::new(
-            self.start_bound(),
-            self.end_bound().min(other.to_inner().end_bound()),
-        )
+        BoundedRange::new(self.start, self.end.min(other.to_inner().end))
     }
 }
 

@@ -15,8 +15,4 @@ impl UnboundedRange {
     pub fn contains<T>(&self, _: T) -> bool {
         true
     }
-
-    pub fn is_empty(&self) -> bool {
-        false
-    }
 }

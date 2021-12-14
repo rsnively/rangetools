@@ -2,7 +2,7 @@ use crate::Bound;
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct UpperBoundedRange<T> {
-    pub(crate) end: Bound<T>,
+    pub end: Bound<T>,
 }
 
 impl<T> From<std::ops::RangeTo<T>> for UpperBoundedRange<T> {
@@ -26,18 +26,10 @@ impl<T: Copy + Ord> UpperBoundedRange<T> {
         Self { end }
     }
 
-    pub fn is_empty(&self) -> bool {
-        false
-    }
-
     pub fn contains(&self, t: T) -> bool {
         match self.end {
             Bound::Excluded(x) => t < x,
             Bound::Included(i) => t <= i,
         }
-    }
-
-    pub fn end_bound(&self) -> Bound<T> {
-        self.end
     }
 }

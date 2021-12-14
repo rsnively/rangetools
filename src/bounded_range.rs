@@ -2,8 +2,8 @@ use crate::{Bound, Rangetools, Step};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
-    pub(crate) start: Bound<T>,
-    pub(crate) end: Bound<T>,
+    pub start: Bound<T>,
+    pub end: Bound<T>,
 }
 
 impl<T> From<std::ops::Range<T>> for BoundedRange<T> {
@@ -30,13 +30,6 @@ impl<T: Copy + Ord> BoundedRange<T> {
         Self { start, end }
     }
 
-    pub fn start_bound(&self) -> Bound<T> {
-        self.start
-    }
-    pub fn end_bound(&self) -> Bound<T> {
-        self.end
-    }
-
     pub fn contains(&self, t: T) -> bool {
         let start_satisfied = match self.start {
             Bound::Excluded(s) => t > s,
@@ -58,8 +51,8 @@ impl<T: Copy + Ord> BoundedRange<T> {
         }
         assert!(!self.disjoint(*other));
         BoundedRange::new(
-            Bound::min(self.start_bound(), other.start_bound()),
-            Bound::max(self.end_bound(), other.end_bound()),
+            Bound::min(self.start, other.start),
+            Bound::max(self.end, other.end),
         )
     }
 }

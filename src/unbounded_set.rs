@@ -22,20 +22,19 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
             .ranges
             .ranges
             .iter()
-            .position(|r| r.start_bound() <= self.upper_bounded_range.end_bound())
+            .position(|r| r.start <= self.upper_bounded_range.end)
         {
             let range = self.ranges.ranges.remove(index);
-            self.upper_bounded_range.end = self.upper_bounded_range.end.max(range.end_bound());
+            self.upper_bounded_range.end = self.upper_bounded_range.end.max(range.end);
             self.defragment();
         } else if let Some(index) = self
             .ranges
             .ranges
             .iter()
-            .position(|r| r.end_bound() >= self.lower_bounded_range.start_bound())
+            .position(|r| r.end >= self.lower_bounded_range.start)
         {
             let range = self.ranges.ranges.remove(index);
-            self.lower_bounded_range.start =
-                self.lower_bounded_range.start.min(range.start_bound());
+            self.lower_bounded_range.start = self.lower_bounded_range.start.min(range.start);
             self.defragment();
         }
     }
@@ -91,7 +90,7 @@ impl<T: Copy + Ord> UnboundedSet<T> {
             ..
         }) = self
         {
-            if upper_bounded_range.end_bound() >= lower_bounded_range.start_bound() {
+            if upper_bounded_range.end >= lower_bounded_range.start {
                 *self = Self::Full
             }
         }
