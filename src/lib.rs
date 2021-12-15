@@ -68,11 +68,51 @@ pub use self::{
     upper_bounded_range::*, upper_bounded_set::*,
 };
 
+/// Extends the standard library Range types with extra functionality.
+///
+/// You shouldn't need to implement this trait yourself. It is already implemented for all of the
+/// applicable types from the standard library and all of the intermediate types in this crate.
 pub trait Rangetools {
+    /// Returns true if the range is empty.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// assert!((3..2).is_empty());
+    /// assert!(!(0..5).is_empty());
+    /// ```
     fn is_empty(&self) -> bool;
 
+    /// The generalized type of the range (for consolidating range types that only differ in
+    /// whether their bounds are inclusive or exclusive).
+    ///
+    /// In this crate, this will be one of [`BoundedRange`], [`LowerBoundedRange`],
+    /// [`UpperBoundedRange`], or [`UnboundedRange`] for the range types, while the set types
+    /// all use themselves as an inner type.
     type Inner;
+    /// Convert the range to its inner type.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{Bound, BoundedRange, Rangetools};
+    ///
+    /// let r = (0..5).to_inner();
+    /// assert_eq!(r, BoundedRange { start: Bound::Included(0), end: Bound::Excluded(5)});
+    /// ```
     fn to_inner(self) -> Self::Inner;
+
+    /// Performs set intersection on `self` and `other`.
+    ///
+    /// Returns a set/range containing all values contained in both sets/ranges.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{Bound, BoundedRange, Rangetools};
+    ///
+    /// let i = (0..5).intersection(3..7);
+    /// assert_eq!(i, BoundedRange { start: Bound::Included(3), end: Bound::Excluded(5)});
+    /// ```
     fn intersection<R, Output>(self, other: R) -> Output
     where
         R: Rangetools,
@@ -81,6 +121,15 @@ pub trait Rangetools {
         RangeIntersection::intersection(self, other)
     }
 
+    /// Returns true if two sets/ranges are disjoint (they have no elements in common).
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// assert!((0..5).disjoint(10..20));
+    /// assert!(!(..5).disjoint(3..));
+    /// ```
     fn disjoint<R, Output>(self, other: R) -> bool
     where
         R: Rangetools,
@@ -90,8 +139,35 @@ pub trait Rangetools {
         Rangetools::intersection(self, other).is_empty()
     }
 
+    /// The set type of the range, for talking about non-contiguous collections of
+    /// elements.
+    ///
+    /// In this crate, this will be one of [`BoundedSet`], [`LowerBoundedSet`],
+    /// [`UpperBoundedSet`], or [`UnboundedSet`].
     type Set;
+    /// Convert the range to its set type.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{BoundedSet, Rangetools};
+    ///
+    /// let s: BoundedSet<_> = (0..5).to_set();
+    /// ```
     fn to_set(self) -> Self::Set;
+
+    /// Performs set union on `self` and `other`.
+    ///
+    /// Returns a set/range containing all values contained in either set/range.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let u = (..3).union(5..);
+    /// assert!(u.contains(0));
+    /// assert!(!u.contains(4));
+    /// assert!(u.contains(5));
+    /// ```
     fn union<R, Output>(self, other: R) -> Output
     where
         R: Rangetools,
