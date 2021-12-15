@@ -3,14 +3,40 @@ use crate::{
     UnboundedRange, UpperBoundedRange,
 };
 
+/// A set of ranges with ultimately no upper or lower bound.
+///
+/// A piecewise unbounded set may contain gaps in an otherwise full set.
+/// # Example
+/// ```
+/// use rangetools::Rangetools;
+///
+/// let piecewise = (..3).union(5..10).union(20..);
+/// assert!(piecewise.contains(0));
+/// assert!(!piecewise.contains(4));
+/// assert!(piecewise.contains(7));
+/// assert!(!piecewise.contains(15));
+/// assert!(piecewise.contains(42));
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct PiecewiseUnboundedSet<T> {
+    /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,
     pub(crate) ranges: BoundedSet<T>,
     pub(crate) lower_bounded_range: LowerBoundedRange<T>,
 }
 
 impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
+    /// Returns true if the set contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let s = (..5).union(10..);
+    /// assert!(s.contains(4));
+    /// assert!(!s.contains(7));
+    /// assert!(s.contains(10));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         self.upper_bounded_range.contains(t)
             || self.lower_bounded_range.contains(t)
@@ -40,9 +66,22 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
     }
 }
 
-#[derive(Clone, Debug)]
+/// A set of ranges ultimately with no upper or lower bound.
+///
+/// An `UnboundedSet` can be constructed directly, but it will most often arise as a
+/// result of one or more range operations.
+/// ```
+/// use rangetools::{UnboundedSet, Rangetools};
+///
+/// let piecewise: UnboundedSet<_> = (..3).union(5..);
+/// let full: UnboundedSet<_> = (..10).union(5..);
+/// assert_eq!(full, UnboundedSet::Full);
+/// ```
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum UnboundedSet<T> {
+    // Denotes an `UnboundedSet` containing all possible values of T.
     Full,
+    // Denotes an `UnboundedSet` which may contain ranges of non-contained values.
     Piecewise(PiecewiseUnboundedSet<T>),
 }
 
@@ -53,6 +92,14 @@ impl<T> From<UnboundedRange> for UnboundedSet<T> {
 }
 
 impl<T: Copy + Ord> UnboundedSet<T> {
+    /// Construct an `UnboundedSet` from an `UpperBoundedRange` and a `LowerBoundedRange`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{LowerBoundedRange, UnboundedSet, UpperBoundedRange};
+    ///
+    /// let s = UnboundedSet::new(UpperBoundedRange::from(..5), LowerBoundedRange::from(10..));
+    /// ```
     pub fn new(
         upper_bounded_range: UpperBoundedRange<T>,
         lower_bounded_range: LowerBoundedRange<T>,
@@ -70,6 +117,17 @@ impl<T: Copy + Ord> UnboundedSet<T> {
 }
 
 impl<T: Copy + Ord> UnboundedSet<T> {
+    /// Returns true if the set contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::UnboundedSet;
+    ///
+    /// let s = UnboundedSet::Full;
+    /// assert!(s.contains(4));
+    /// assert!(s.contains(7));
+    /// assert!(s.contains(10));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         match self {
             Self::Full => true,

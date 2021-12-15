@@ -1,7 +1,17 @@
 use crate::{Bound, BoundedRange, BoundedSet, Rangetools, UpperBoundedRange};
 
+/// A set of ranges with a finite upper bound but no lower bound.
+///
+/// While an `UpperBoundedSet` can be constructed directly, it will most likely arise as a
+/// result of one or more range operations.
+/// ```
+/// use rangetools::{UpperBoundedSet, Rangetools};
+///
+/// let s: UpperBoundedSet<_> = (10..20).union(..5);
+/// ```
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct UpperBoundedSet<T> {
+    /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,
     pub(crate) ranges: BoundedSet<T>,
 }
@@ -47,6 +57,16 @@ impl<T: Copy + Ord> UpperBoundedSet<T> {
         }
     }
 
+    /// Returns true if the set contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let s = (10..20).union(..5);
+    /// assert!(s.contains(0));
+    /// assert!(!s.contains(42));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         self.upper_bounded_range.contains(t) || self.ranges.contains(t)
     }

@@ -1,7 +1,17 @@
 use crate::{Bound, BoundedRange, BoundedSet, LowerBoundedRange, Rangetools, Step};
 
+/// A set of ranges with a finite lower bound but no upper bound.
+///
+/// While a `LowerBoundedSet` can be constructed directly, it will most likely arise as a
+/// result of one or more range operations.
+/// ```
+/// use rangetools::{LowerBoundedSet, Rangetools};
+///
+/// let s: LowerBoundedSet<_> = (0..3).union(5..);
+/// ```
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct LowerBoundedSet<T> {
+    /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) ranges: BoundedSet<T>,
     pub(crate) lower_bounded_range: LowerBoundedRange<T>,
 }
@@ -57,6 +67,16 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
         }
     }
 
+    /// Returns true if the set contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let s = (1..5).union(10..);
+    /// assert!(s.contains(42));
+    /// assert!(!s.contains(0));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         self.lower_bounded_range.contains(t) || self.ranges.contains(t)
     }

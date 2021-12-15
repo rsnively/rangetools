@@ -1,7 +1,20 @@
 use crate::{Bound, Step};
 
+/// A range only bounded below (either inclusive or exclusive).
+///
+/// Generalizes over [`std::ops::RangeFrom`] but also supports ranges with an exclusive lower bound.
+///
+/// While a `LowerBoundedRange` can be constructed directly, it will most likely
+/// result from one or more range operations.
+/// ```
+/// use rangetools::{Bound, LowerBoundedRange, Rangetools};
+///
+/// let i = (5..).intersection(10..);
+/// assert_eq!(i, LowerBoundedRange { start: Bound::Included(10) });
+/// ```
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct LowerBoundedRange<T> {
+    /// The lower bound of the range (can be inclusive or exclusive).
     pub start: Bound<T>,
 }
 
@@ -14,10 +27,29 @@ impl<T> From<std::ops::RangeFrom<T>> for LowerBoundedRange<T> {
 }
 
 impl<T: Copy + Ord> LowerBoundedRange<T> {
+    /// Constructs a new `LowerBoundedRange` from a lower bound.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{Bound, LowerBoundedRange};
+    ///
+    /// let r = LowerBoundedRange::new(Bound::Included(0));
+    /// assert!(r.contains(5));
+    /// ```
     pub fn new(start: Bound<T>) -> Self {
         Self { start }
     }
 
+    /// Returns true if the range contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let i = (5..).intersection(10..);
+    /// assert!(i.contains(10));
+    /// assert!(!i.contains(5));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         match self.start {
             Bound::Excluded(x) => t > x,

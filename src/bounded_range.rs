@@ -1,8 +1,27 @@
 use crate::{Bound, Rangetools, Step};
 
+/// A range bounded both below and above (either inclusive or exclusive).
+///
+/// Generalizes over [`std::ops::Range`] and [`std::ops::RangeInclusive`] but also supports ranges
+/// with an exclusive lower bound.
+///
+/// While a `BoundedRange` can be constructed from one of the above types, it will most likely
+/// result from one or more range operations.
+/// ```
+/// use rangetools::{Bound, BoundedRange, Rangetools};
+///
+/// let i = (0..5).intersection(3..7);
+/// assert_eq!(i, BoundedRange { start: Bound::Included(3), end: Bound::Excluded(5) });
+/// ```
+///
+/// The range is empty if the start bound is greater than the end bound. Note that a range
+/// with start bound `Bound::Excluded(3)` and end bound `Bound::Excluded(4)` is not considered
+/// empty even though it doesn't contain any values.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
+    /// The lower bound of the range (can be inclusive or exclusive).
     pub start: Bound<T>,
+    /// The upper bound of the range (can be inclusive or exclusive).
     pub end: Bound<T>,
 }
 
@@ -26,10 +45,29 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
 }
 
 impl<T: Copy + Ord> BoundedRange<T> {
+    /// Constructs a new `BoundedRange` from a lower bound and an upper bound.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{Bound, BoundedRange};
+    ///
+    /// let r = BoundedRange::new(Bound::Included(0), Bound::Included(10));
+    /// assert!(r.contains(5));
+    /// ```
     pub fn new(start: Bound<T>, end: Bound<T>) -> Self {
         Self { start, end }
     }
 
+    /// Returns true if the range contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let r = (1..10).intersection(5..7);
+    /// assert!(r.contains(5));
+    /// assert!(!r.contains(3));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         let start_satisfied = match self.start {
             Bound::Excluded(s) => t > s,
@@ -42,7 +80,7 @@ impl<T: Copy + Ord> BoundedRange<T> {
         start_satisfied && end_satisfied
     }
 
-    pub fn combine(&self, other: &Self) -> Self {
+    pub(crate) fn combine(&self, other: &Self) -> Self {
         if other.is_empty() {
             return self.clone();
         }

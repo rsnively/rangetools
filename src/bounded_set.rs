@@ -1,7 +1,17 @@
 use crate::{BoundedRange, Rangetools, Step};
 
+/// A set of ranges ultimately bounded both below and above.
+///
+/// While a `BoundedSet` can be constructed directly, it will most likely arise as a
+/// result of one or more range operations.
+/// ```
+/// use rangetools::{BoundedSet, Rangetools};
+///
+/// let s: BoundedSet<_> = (0..3).union(3..5);
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
+    /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) ranges: Vec<BoundedRange<T>>,
 }
 
@@ -25,6 +35,16 @@ impl<T: Copy + Ord + Step> Iterator for BoundedSet<T> {
 }
 
 impl<T> BoundedSet<T> {
+    /// Construct an empty `BoundedSet`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::{BoundedSet, Rangetools};
+    ///
+    /// let s = BoundedSet::empty();
+    /// assert!(s.is_empty());
+    /// assert!(!s.contains(5));
+    /// ```
     pub fn empty() -> Self {
         Self { ranges: Vec::new() }
     }
@@ -53,6 +73,16 @@ impl<T: Copy + Ord> BoundedSet<T> {
         }
     }
 
+    /// Returns true if the set contains `t`.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let s = (1..5).union(10..20);
+    /// assert!(s.contains(1));
+    /// assert!(!s.contains(42));
+    /// ```
     pub fn contains(&self, t: T) -> bool {
         self.ranges.iter().any(|r| r.contains(t))
     }
