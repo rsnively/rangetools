@@ -20,8 +20,8 @@ fn foo() {
     let i = (0..5).intersection(3..);
     assert!(i.contains(4));
 
-    let u1 = (1..3).union(5..7);
-    assert_eq!(u1.collect::<Vec<_>>(), vec![1, 2, 5, 6]);
+    let u = (1..3).union(5..7);
+    assert_eq!(u.collect::<Vec<_>>(), vec![1, 2, 5, 6]);
 }
 ```
 
