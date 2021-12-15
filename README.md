@@ -11,15 +11,17 @@ Add this to your `Cargo.toml`:
 rangetools = "0.1"
 ```
 
-Use a trait in your crate:
+How to use in your crate:
 
 ```rust
-use rangetools::RangeIntersection;
+use rangetools::Rangetools;
 
 fn foo() {
-    assert!((0..5).intersection(2..10).contains(3));
-    assert!((0..5).intersection(5..10).is_empty());
-    assert_eq!((..=2).intersection(1..).collect::<Vec<_>>(), vec![1, 2]);
+    let i = (0..5).intersection(3..);
+    assert!(i.contains(4));
+
+    let u1 = (1..3).union(5..7);
+    assert_eq!(u1.collect::<Vec<_>>(), vec![1, 2, 5, 6]);
 }
 ```
 
