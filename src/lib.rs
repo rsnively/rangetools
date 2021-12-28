@@ -95,10 +95,10 @@ pub trait Rangetools {
     ///
     /// # Example
     /// ```
-    /// use rangetools::{Bound, BoundedRange, Rangetools};
+    /// use rangetools::{BoundedRange, LowerBound, Rangetools, UpperBound};
     ///
     /// let r = (0..5).to_inner();
-    /// assert_eq!(r, BoundedRange { start: Bound::Included(0), end: Bound::Excluded(5)});
+    /// assert_eq!(r, BoundedRange { start: LowerBound::included(0), end: UpperBound::excluded(5)});
     /// ```
     fn to_inner(self) -> Self::Inner;
 
@@ -108,10 +108,10 @@ pub trait Rangetools {
     ///
     /// # Example
     /// ```
-    /// use rangetools::{Bound, BoundedRange, Rangetools};
+    /// use rangetools::{BoundedRange, LowerBound, Rangetools, UpperBound};
     ///
     /// let i = (0..5).intersection(3..7);
-    /// assert_eq!(i, BoundedRange { start: Bound::Included(3), end: Bound::Excluded(5)});
+    /// assert_eq!(i, BoundedRange { start: LowerBound::included(3), end: UpperBound::excluded(5)});
     /// ```
     fn intersection<R, Output>(self, other: R) -> Output
     where

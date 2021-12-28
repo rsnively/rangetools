@@ -1,4 +1,4 @@
-use crate::{Bound, BoundedRange, BoundedSet, LowerBoundedRange, Rangetools, Step};
+use crate::{BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, Rangetools, Step};
 
 /// A set of ranges with a finite lower bound but no upper bound.
 ///
@@ -58,7 +58,8 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
         self.defragment();
     }
     pub(crate) fn add_lower_bounded_range(&mut self, range: LowerBoundedRange<T>) {
-        self.lower_bounded_range.start = Bound::min(self.lower_bounded_range.start, range.start);
+        self.lower_bounded_range.start =
+            LowerBound::min(self.lower_bounded_range.start, range.start);
         self.defragment();
     }
     pub(crate) fn add_set(&mut self, set: BoundedSet<T>) {

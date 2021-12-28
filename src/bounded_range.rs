@@ -1,4 +1,4 @@
-use crate::{Bound, Rangetools, Step};
+use crate::{Bound, LowerBound, Rangetools, Step, UpperBound};
 
 /// A range bounded both below and above (either inclusive or exclusive).
 ///
@@ -8,10 +8,10 @@ use crate::{Bound, Rangetools, Step};
 /// While a `BoundedRange` can be constructed from one of the above types, it will most likely
 /// result from one or more range operations.
 /// ```
-/// use rangetools::{Bound, BoundedRange, Rangetools};
+/// use rangetools::{BoundedRange, LowerBound, Rangetools, UpperBound};
 ///
 /// let i = (0..5).intersection(3..7);
-/// assert_eq!(i, BoundedRange { start: Bound::Included(3), end: Bound::Excluded(5) });
+/// assert_eq!(i, BoundedRange { start: LowerBound::included(3), end: UpperBound::excluded(5) });
 /// ```
 ///
 /// The range is empty if the start bound is greater than the end bound. Note that a range
@@ -20,16 +20,16 @@ use crate::{Bound, Rangetools, Step};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct BoundedRange<T> {
     /// The lower bound of the range (can be inclusive or exclusive).
-    pub start: Bound<T>,
+    pub start: LowerBound<T>,
     /// The upper bound of the range (can be inclusive or exclusive).
-    pub end: Bound<T>,
+    pub end: UpperBound<T>,
 }
 
 impl<T> From<std::ops::Range<T>> for BoundedRange<T> {
     fn from(r: std::ops::Range<T>) -> Self {
         Self {
-            start: Bound::Included(r.start),
-            end: Bound::Excluded(r.end),
+            start: LowerBound::included(r.start),
+            end: UpperBound::excluded(r.end),
         }
     }
 }
@@ -38,8 +38,8 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
     fn from(r: std::ops::RangeInclusive<T>) -> Self {
         let (start, end) = r.into_inner();
         Self {
-            start: Bound::Included(start),
-            end: Bound::Included(end),
+            start: LowerBound::included(start),
+            end: UpperBound::included(end),
         }
     }
 }
@@ -49,12 +49,12 @@ impl<T: Copy + Ord> BoundedRange<T> {
     ///
     /// # Example
     /// ```
-    /// use rangetools::{Bound, BoundedRange};
+    /// use rangetools::{BoundedRange, LowerBound, UpperBound};
     ///
-    /// let r = BoundedRange::new(Bound::Included(0), Bound::Included(10));
+    /// let r = BoundedRange::new(LowerBound::included(0), UpperBound::included(10));
     /// assert!(r.contains(5));
     /// ```
-    pub fn new(start: Bound<T>, end: Bound<T>) -> Self {
+    pub fn new(start: LowerBound<T>, end: UpperBound<T>) -> Self {
         Self { start, end }
     }
 
@@ -69,11 +69,11 @@ impl<T: Copy + Ord> BoundedRange<T> {
     /// assert!(!r.contains(3));
     /// ```
     pub fn contains(&self, t: T) -> bool {
-        let start_satisfied = match self.start {
+        let start_satisfied = match self.start.0 {
             Bound::Excluded(s) => t > s,
             Bound::Included(s) => t >= s,
         };
-        let end_satisfied = match self.end {
+        let end_satisfied = match self.end.0 {
             Bound::Excluded(e) => t < e,
             Bound::Included(e) => t <= e,
         };
@@ -87,10 +87,10 @@ impl<T: Copy + Ord> BoundedRange<T> {
         if self.is_empty() {
             return other.clone();
         }
-        assert!(!self.disjoint(*other));
+        assert!(self.intersects(*other));
         BoundedRange::new(
-            Bound::min(self.start, other.start),
-            Bound::max(self.end, other.end),
+            LowerBound::min(self.start, other.start),
+            UpperBound::max(self.end, other.end),
         )
     }
 }
@@ -101,21 +101,26 @@ where
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        match self.start {
-            Bound::Included(t) => {
-                if self.start > self.end {
-                    None
-                } else {
+        if self.is_empty() {
+            None
+        } else {
+            match (self.start.0, self.end.0) {
+                (Bound::Included(start), _) => {
                     self.start = self.start.map(T::next);
-                    Some(t)
+                    Some(start)
                 }
-            }
-            Bound::Excluded(t) => {
-                if self.start >= self.end {
-                    None
-                } else {
+                (Bound::Excluded(start), Bound::Included(_)) => {
                     self.start = self.start.map(T::next);
-                    Some(t.next())
+                    Some(start.next())
+                }
+                (Bound::Excluded(start), Bound::Excluded(end)) => {
+                    let next = start.next();
+                    if next >= end {
+                        None
+                    } else {
+                        self.start = self.start.map(T::next);
+                        Some(next)
+                    }
                 }
             }
         }

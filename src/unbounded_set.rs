@@ -1,6 +1,6 @@
 use crate::{
-    Bound, BoundedRange, BoundedSet, LowerBoundedRange, RangeIntersection, Rangetools,
-    UnboundedRange, UpperBoundedRange,
+    Bound, BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, RangeIntersection, Rangetools,
+    UnboundedRange, UpperBound, UpperBoundedRange,
 };
 
 /// A set of ranges with ultimately no upper or lower bound.
@@ -48,7 +48,7 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
             .ranges
             .ranges
             .iter()
-            .position(|r| r.start <= self.upper_bounded_range.end)
+            .position(|r| self.upper_bounded_range.intersects(*r))
         {
             let range = self.ranges.ranges.remove(index);
             self.upper_bounded_range.end = self.upper_bounded_range.end.max(range.end);
@@ -57,7 +57,7 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
             .ranges
             .ranges
             .iter()
-            .position(|r| r.end >= self.lower_bounded_range.start)
+            .position(|r| self.lower_bounded_range.intersects(*r))
         {
             let range = self.ranges.ranges.remove(index);
             self.lower_bounded_range.start = self.lower_bounded_range.start.min(range.start);
@@ -148,7 +148,7 @@ impl<T: Copy + Ord> UnboundedSet<T> {
             ..
         }) = self
         {
-            if upper_bounded_range.end >= lower_bounded_range.start {
+            if upper_bounded_range.intersects(*lower_bounded_range) {
                 *self = Self::Full
             }
         }
@@ -160,13 +160,13 @@ impl<T: Copy + Ord> UnboundedSet<T> {
     }
     pub(crate) fn add_lower_bounded_range(&mut self, range: LowerBoundedRange<T>) {
         self.map_piecewise(|p| {
-            p.lower_bounded_range.start = Bound::min(p.lower_bounded_range.start, range.start);
+            p.lower_bounded_range.start = LowerBound::min(p.lower_bounded_range.start, range.start);
         });
         self.defragment();
     }
     pub(crate) fn add_upper_bounded_range(&mut self, range: UpperBoundedRange<T>) {
         self.map_piecewise(|p| {
-            p.upper_bounded_range.end = Bound::max(p.upper_bounded_range.end, range.end);
+            p.upper_bounded_range.end = UpperBound::max(p.upper_bounded_range.end, range.end);
         });
         self.defragment();
     }

@@ -1,8 +1,13 @@
-use crate::{BoundedRange, BoundedSet, Rangetools};
+use crate::{Bound, BoundedRange, BoundedSet, Rangetools};
 
 impl<T: Copy + Ord> Rangetools for BoundedRange<T> {
     fn is_empty(&self) -> bool {
-        self.start > self.end
+        match (self.start.0, self.end.0) {
+            (Bound::Included(start), Bound::Included(end)) => start > end,
+            (Bound::Excluded(start), Bound::Included(end))
+            | (Bound::Included(start), Bound::Excluded(end))
+            | (Bound::Excluded(start), Bound::Excluded(end)) => start >= end,
+        }
     }
 
     type Inner = Self;

@@ -53,7 +53,7 @@ impl<T> BoundedSet<T> {
 impl<T: Copy + Ord> BoundedSet<T> {
     pub(crate) fn add_range(&mut self, r: BoundedRange<T>) {
         if !r.is_empty() {
-            if let Some(index) = self.ranges.iter().position(|range| !range.disjoint(r)) {
+            if let Some(index) = self.ranges.iter().position(|range| range.intersects(r)) {
                 let new_range = r.combine(&self.ranges[index]);
                 self.ranges.remove(index);
                 self.add_range(new_range);
@@ -61,7 +61,7 @@ impl<T: Copy + Ord> BoundedSet<T> {
                 let index = self
                     .ranges
                     .iter()
-                    .position(|range| range.start > r.end)
+                    .position(|range| range.start > r.start)
                     .unwrap_or(self.ranges.len());
                 self.ranges.insert(index, r);
             }

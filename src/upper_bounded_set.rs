@@ -1,4 +1,4 @@
-use crate::{Bound, BoundedRange, BoundedSet, Rangetools, UpperBoundedRange};
+use crate::{BoundedRange, BoundedSet, Rangetools, UpperBound, UpperBoundedRange};
 
 /// A set of ranges with a finite upper bound but no lower bound.
 ///
@@ -48,7 +48,7 @@ impl<T: Copy + Ord> UpperBoundedSet<T> {
         self.defragment();
     }
     pub(crate) fn add_upper_bounded_range(&mut self, range: UpperBoundedRange<T>) {
-        self.upper_bounded_range.end = Bound::max(self.upper_bounded_range.end, range.end);
+        self.upper_bounded_range.end = UpperBound::max(self.upper_bounded_range.end, range.end);
         self.defragment();
     }
     pub(crate) fn add_set(&mut self, set: BoundedSet<T>) {
