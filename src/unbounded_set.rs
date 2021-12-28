@@ -1,5 +1,5 @@
 use crate::{
-    Bound, BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, RangeIntersection, Rangetools,
+    BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, RangeIntersection, Rangetools,
     UnboundedRange, UpperBound, UpperBoundedRange,
 };
 
