@@ -139,6 +139,24 @@ pub trait Rangetools {
         Rangetools::intersection(self, other).is_empty()
     }
 
+    /// Returns true if two sets/ranges intersect (they have at least one element in common).
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// assert!((..5).intersects(3..));
+    /// assert!(!(0..5).intersects(10..20));
+    /// ```
+    fn intersects<R, Output>(self, other: R) -> bool
+    where
+        R: Rangetools,
+        Output: Rangetools,
+        Self: Sized + RangeIntersection<R, R::Inner, Output = Output>,
+    {
+        !self.disjoint(other)
+    }
+
     /// The set type of the range, for talking about non-contiguous collections of
     /// elements.
     ///
