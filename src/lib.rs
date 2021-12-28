@@ -1,3 +1,5 @@
+#![warn(missing_docs)]
+
 //! Extra methods for the standard library Range types:
 //! * [`std::ops::Range`]
 //! * [`std::ops::RangeFrom`]

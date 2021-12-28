@@ -79,9 +79,9 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum UnboundedSet<T> {
-    // Denotes an `UnboundedSet` containing all possible values of T.
+    /// Denotes an `UnboundedSet` containing all possible values of T.
     Full,
-    // Denotes an `UnboundedSet` which may contain ranges of non-contained values.
+    /// Denotes an `UnboundedSet` which may contain ranges of non-contained values.
     Piecewise(PiecewiseUnboundedSet<T>),
 }
 

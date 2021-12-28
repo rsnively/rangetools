@@ -5,7 +5,9 @@
 /// iterable or not.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Bound<T> {
+    /// An excluded bound.
     Excluded(T),
+    /// An included bound.
     Included(T),
 }
 
