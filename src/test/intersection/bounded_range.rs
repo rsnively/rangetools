@@ -1,4 +1,4 @@
-use crate::Rangetools as _;
+use crate::{EmptyRange, Rangetools as _};
 
 #[test]
 fn range() {
@@ -162,6 +162,15 @@ fn unbounded_range() {
     assert!(!i.is_empty());
     let r3 = (1..3).intersection(5..10);
     assert!(r3.intersection(..).is_empty());
+}
+
+#[test]
+fn empty_range() {
+    let r1 = (1..4).intersection(..);
+    let r2 = EmptyRange::new();
+    let i = r1.intersection(r2);
+    assert!(i.is_empty());
+    assert_eq!(i.collect::<Vec<_>>(), vec![]);
 }
 
 #[test]

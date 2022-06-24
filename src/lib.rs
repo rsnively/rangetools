@@ -51,6 +51,7 @@
 mod bound;
 mod bounded_range;
 mod bounded_set;
+mod empty_range;
 mod implementations;
 mod intersection;
 mod lower_bounded_range;
@@ -65,9 +66,9 @@ mod upper_bounded_range;
 mod upper_bounded_set;
 
 pub use self::{
-    bound::*, bounded_range::*, bounded_set::*, intersection::*, lower_bounded_range::*,
-    lower_bounded_set::*, step::*, unbounded_range::*, unbounded_set::*, union::*,
-    upper_bounded_range::*, upper_bounded_set::*,
+    bound::*, bounded_range::*, bounded_set::*, empty_range::*, intersection::*,
+    lower_bounded_range::*, lower_bounded_set::*, step::*, unbounded_range::*, unbounded_set::*,
+    union::*, upper_bounded_range::*, upper_bounded_set::*,
 };
 
 /// Extends the standard library Range types with extra functionality.

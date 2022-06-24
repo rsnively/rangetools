@@ -1,5 +1,5 @@
 use crate::{
-    BoundedSet, LowerBoundedSet, RangeUnion, Rangetools, UnboundedRange, UnboundedSet,
+    BoundedSet, EmptyRange, LowerBoundedSet, RangeUnion, Rangetools, UnboundedRange, UnboundedSet,
     UpperBoundedSet,
 };
 
@@ -57,6 +57,17 @@ where
     T: Copy + Ord,
 {
     type Output = UnboundedRange;
+    fn union(self, other: R) -> Self::Output {
+        RangeUnion::union(other.to_set(), self)
+    }
+}
+
+impl<T, R> RangeUnion<R, EmptyRange<T>> for UpperBoundedSet<T>
+where
+    R: Rangetools<Set = EmptyRange<T>>,
+    T: Copy + Ord,
+{
+    type Output = UpperBoundedSet<T>;
     fn union(self, other: R) -> Self::Output {
         RangeUnion::union(other.to_set(), self)
     }

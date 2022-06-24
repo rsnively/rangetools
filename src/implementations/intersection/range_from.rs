@@ -1,6 +1,6 @@
 use crate::{
-    BoundedRange, BoundedSet, LowerBoundedRange, LowerBoundedSet, RangeIntersection, Rangetools,
-    UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
+    BoundedRange, BoundedSet, EmptyRange, LowerBoundedRange, LowerBoundedSet, RangeIntersection,
+    Rangetools, UnboundedRange, UnboundedSet, UpperBoundedRange, UpperBoundedSet,
 };
 
 impl<T, R> RangeIntersection<R, BoundedRange<T>> for std::ops::RangeFrom<T>
@@ -88,5 +88,16 @@ where
     type Output = LowerBoundedSet<T>;
     fn intersection(self, other: R) -> Self::Output {
         RangeIntersection::intersection(self.to_inner(), other)
+    }
+}
+
+impl<T, R> RangeIntersection<R, EmptyRange<T>> for std::ops::RangeFrom<T>
+where
+    R: Rangetools<Inner = EmptyRange<T>>,
+    T: Copy + Ord,
+{
+    type Output = EmptyRange<T>;
+    fn intersection(self, other: R) -> Self::Output {
+        other.to_inner()
     }
 }

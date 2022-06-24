@@ -1,4 +1,4 @@
-use crate::Rangetools as _;
+use crate::{EmptyRange, Rangetools as _};
 
 #[test]
 fn range() {
@@ -175,6 +175,13 @@ fn unbounded_range() {
     assert!(u.contains(5));
     assert!(u.contains(6));
     assert!(!u.is_empty());
+}
+
+#[test]
+fn empty_range() {
+    let s = (1..3).union(4..);
+    let u = s.clone().union(EmptyRange::new());
+    assert_eq!(s, u);
 }
 
 #[test]
