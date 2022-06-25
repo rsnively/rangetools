@@ -51,6 +51,7 @@
 mod bound;
 mod bounded_range;
 mod bounded_set;
+mod complement;
 mod empty_range;
 mod implementations;
 mod intersection;
@@ -66,7 +67,7 @@ mod upper_bounded_range;
 mod upper_bounded_set;
 
 pub use self::{
-    bound::*, bounded_range::*, bounded_set::*, empty_range::*, intersection::*,
+    bound::*, bounded_range::*, bounded_set::*, complement::*, empty_range::*, intersection::*,
     lower_bounded_range::*, lower_bounded_set::*, step::*, unbounded_range::*, unbounded_set::*,
     union::*, upper_bounded_range::*, upper_bounded_set::*,
 };
@@ -86,6 +87,23 @@ pub trait Rangetools {
     /// assert!(!(0..5).is_empty());
     /// ```
     fn is_empty(&self) -> bool;
+
+    /// Returns the [complement](https://en.wikipedia.org/wiki/Complement_(set_theory)) of `self` (ie,
+    /// the set of all elements not in `self`).
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Rangetools;
+    ///
+    /// let range = 2..4;
+    /// assert_eq!(range.complement(), (..2).union(4..));
+    /// ```
+    fn complement<Output>(self) -> Output
+    where
+        Self: Sized + RangeComplement<Output>,
+    {
+        RangeComplement::complement(self)
+    }
 
     /// The generalized type of the range (for consolidating range types that only differ in
     /// whether their bounds are inclusive or exclusive).

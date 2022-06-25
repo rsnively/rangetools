@@ -31,6 +31,25 @@ impl<T> Bound<T> {
             Self::Included(t) => Bound::Included(f(t)),
         }
     }
+
+    /// Turn an inclusive bound into an exclusive one (or vice versa), keeping the
+    /// contained value the same.
+    ///
+    /// # Example
+    /// ```
+    /// use rangetools::Bound;
+    ///
+    /// let included = Bound::Included(3);
+    /// let excluded = Bound::Excluded(3);
+    /// assert_eq!(included.flipped(), excluded);
+    /// assert_eq!(excluded.flipped(), included);
+    /// ```
+    pub fn flipped(self) -> Bound<T> {
+        match self {
+            Self::Excluded(t) => Self::Included(t),
+            Self::Included(t) => Self::Excluded(t),
+        }
+    }
 }
 
 /// Lower bound of a range.
