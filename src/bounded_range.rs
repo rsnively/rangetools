@@ -175,7 +175,7 @@ where
             None
         } else {
             let t = self.last;
-            self.last = self.current.prev();
+            self.last = self.last.prev();
             Some(t)
         }
     }

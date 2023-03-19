@@ -114,9 +114,10 @@ where
     }
 
     fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        let bounded_size = self.set_iter.len();
         self.set_iter
             .nth(n)
-            .or_else(|| self.range_iter.nth(n - self.set_iter.len()))
+            .or_else(|| self.range_iter.nth(n - bounded_size))
     }
 }
 

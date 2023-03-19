@@ -151,6 +151,8 @@ where
             if len <= n {
                 n -= len;
                 self.range_iters.remove(0);
+            } else {
+                break;
             }
         }
         self.range_iters.front_mut().map(|i| i.nth(n)).flatten()
@@ -178,6 +180,8 @@ where
             if len <= n {
                 n -= len;
                 self.range_iters.pop_back();
+            } else {
+                break;
             }
         }
         self.range_iters.back_mut().map(|i| i.nth_back(n)).flatten()
