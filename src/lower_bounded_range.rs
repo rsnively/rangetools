@@ -76,6 +76,17 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
     }
 }
 
+/// An iterator over the values contained by a `LowerBoundedRange`.
+///
+/// Created by the `into_iter` method on `LowerBoundedRange` (provided by the [`std::iter::IntoIterator`] trait).
+///
+/// # Example
+///
+/// ```
+/// # use rangetools::{LowerBoundedRange, LowerBoundedRangeIter};
+/// let r: LowerBoundedRange<i32> = (0..).into();
+/// let iter: LowerBoundedRangeIter<i32> = r.into_iter();
+/// ```
 #[derive(Clone, Debug)]
 pub struct LowerBoundedRangeIter<T> {
     current: T,

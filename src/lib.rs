@@ -29,7 +29,7 @@
 //! ```
 //!
 //! Wherever possible (when the result is lower-bounded), the resulting
-//! types of these operations implement [`Iterator`] so that more operations
+//! types of these operations implement [`IntoIterator`] so that more operations
 //! can be performed on them.
 //!
 //! ```

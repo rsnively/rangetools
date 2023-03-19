@@ -116,6 +116,17 @@ impl<T: Copy + Ord> BoundedRange<T> {
     }
 }
 
+/// An iterator over the values contained by a `BoundedRange`.
+///
+/// Created by the `into_iter` method on `BoundedRange` (provided by the [`std::iter::IntoIterator`] trait).
+///
+/// # Example
+///
+/// ```
+/// # use rangetools::{BoundedRange, BoundedRangeIter};
+/// let r: BoundedRange<i32> = (0..10).into();
+/// let iter: BoundedRangeIter<i32> = r.into_iter();
+/// ```
 #[derive(Clone, Debug)]
 pub struct BoundedRangeIter<T> {
     current: T,

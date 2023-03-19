@@ -96,6 +96,17 @@ impl<T: Copy + Ord> BoundedSet<T> {
     }
 }
 
+/// An iterator over the values contained by a `BoundedSet`.
+///
+/// Created by the `into_iter` method on `BoundedSet` (provided by the [`std::iter::IntoIterator`] trait).
+///
+/// # Example
+///
+/// ```
+/// # use rangetools::{Rangetools, BoundedSet, BoundedSetIter};
+/// let s: BoundedSet<i32> = (0..1).union(2..3);
+/// let iter: BoundedSetIter<i32> = s.into_iter();
+/// ```
 #[derive(Clone, Debug)]
 pub struct BoundedSetIter<T> {
     range_iters: VecDeque<BoundedRangeIter<T>>,

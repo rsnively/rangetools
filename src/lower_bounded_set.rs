@@ -93,6 +93,17 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
     }
 }
 
+/// An iterator over the values contained by a `LowerBoundedSet`.
+///
+/// Created by the `into_iter` method on `LowerBoundedSet` (provided by the [`std::iter::IntoIterator`] trait).
+///
+/// # Example
+///
+/// ```
+/// # use rangetools::{LowerBoundedSet, LowerBoundedSetIter, Rangetools};
+/// let s: LowerBoundedSet<i32> = (1..2).union(3..);
+/// let iter: LowerBoundedSetIter<i32> = s.into_iter();
+/// ```
 #[derive(Clone, Debug)]
 pub struct LowerBoundedSetIter<T> {
     set_iter: BoundedSetIter<T>,
