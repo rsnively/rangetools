@@ -1,4 +1,6 @@
-use crate::{BoundedRange, Rangetools, Step};
+use std::{collections::VecDeque, iter::FusedIterator};
+
+use crate::{BoundedRange, BoundedRangeIter, Rangetools, Step};
 
 /// A set of ranges ultimately bounded both below and above.
 ///
@@ -12,7 +14,7 @@ use crate::{BoundedRange, Rangetools, Step};
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct BoundedSet<T> {
     /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
-    pub(crate) ranges: Vec<BoundedRange<T>>,
+    pub(crate) ranges: VecDeque<BoundedRange<T>>,
 }
 
 impl<T: Copy + Ord> From<BoundedRange<T>> for BoundedSet<T> {
@@ -20,17 +22,21 @@ impl<T: Copy + Ord> From<BoundedRange<T>> for BoundedSet<T> {
         if r.is_empty() {
             Self::empty()
         } else {
-            Self { ranges: vec![r] }
+            Self { ranges: [r].into() }
         }
     }
 }
 
-impl<T: Copy + Ord + Step> Iterator for BoundedSet<T> {
+impl<T> IntoIterator for BoundedSet<T>
+where
+    T: Copy + Ord + Step,
+{
+    type IntoIter = BoundedSetIter<T>;
     type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        let ret = self.ranges.first_mut().map(|r| r.next()).flatten();
-        self.ranges.retain(|r| !r.is_empty());
-        ret
+    fn into_iter(self) -> Self::IntoIter {
+        BoundedSetIter {
+            range_iters: self.ranges.into_iter().map(|r| r.into_iter()).collect(),
+        }
     }
 }
 
@@ -46,7 +52,9 @@ impl<T> BoundedSet<T> {
     /// assert!(!s.contains(5));
     /// ```
     pub fn empty() -> Self {
-        Self { ranges: Vec::new() }
+        Self {
+            ranges: VecDeque::new(),
+        }
     }
 }
 
@@ -87,3 +95,95 @@ impl<T: Copy + Ord> BoundedSet<T> {
         self.ranges.iter().any(|r| r.contains(t))
     }
 }
+
+#[derive(Clone, Debug)]
+pub struct BoundedSetIter<T> {
+    range_iters: VecDeque<BoundedRangeIter<T>>,
+}
+
+impl<T> Iterator for BoundedSetIter<T>
+where
+    T: Copy + Ord + Step,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while self
+            .range_iters
+            .front()
+            .map(|i| i.len() == 0)
+            .unwrap_or(false)
+        {
+            self.range_iters.pop_front();
+        }
+        self.range_iters.front_mut().map(|i| i.next()).flatten()
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let size = self.range_iters.iter().map(|i| i.len()).sum();
+        (size, Some(size))
+    }
+
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.len()
+    }
+
+    fn last(mut self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        while self
+            .range_iters
+            .back()
+            .map(|i| i.len() == 0)
+            .unwrap_or(false)
+        {
+            self.range_iters.pop_back();
+        }
+        self.range_iters.back_mut().map(|i| i.last()).flatten()
+    }
+
+    fn nth(&mut self, mut n: usize) -> Option<Self::Item> {
+        while let Some(len) = self.range_iters.front().map(|i| i.len()) {
+            if len <= n {
+                n -= len;
+                self.range_iters.remove(0);
+            }
+        }
+        self.range_iters.front_mut().map(|i| i.nth(n)).flatten()
+    }
+}
+
+impl<T> DoubleEndedIterator for BoundedSetIter<T>
+where
+    T: Copy + Ord + Step,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        while self
+            .range_iters
+            .back()
+            .map(|i| i.len() == 0)
+            .unwrap_or(false)
+        {
+            self.range_iters.pop_back();
+        }
+        self.range_iters.back_mut().map(|i| i.next_back()).flatten()
+    }
+
+    fn nth_back(&mut self, mut n: usize) -> Option<Self::Item> {
+        while let Some(len) = self.range_iters.back_mut().map(|i| i.len()) {
+            if len <= n {
+                n -= len;
+                self.range_iters.pop_back();
+            }
+        }
+        self.range_iters.back_mut().map(|i| i.nth_back(n)).flatten()
+    }
+}
+
+impl<T> ExactSizeIterator for BoundedSetIter<T> where T: Copy + Ord + Step {}
+
+impl<T> FusedIterator for BoundedSetIter<T> where T: Copy + Ord + Step {}

@@ -53,7 +53,7 @@ fn range_full() {
 
 #[test]
 fn bounded_range() {
-    let r: BoundedRange<i32> = (1..3).to_inner();
+    let r: BoundedRange<i128> = (1..3).to_inner();
     let c = UnboundedSet::new(
         UpperBoundedRange::new(UpperBound::excluded(1)),
         LowerBoundedRange::new(LowerBound::included(3)),

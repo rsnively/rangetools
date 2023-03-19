@@ -2,6 +2,6 @@ use crate::EmptyRange;
 
 #[test]
 fn test_next() {
-    let mut r = EmptyRange::<i32>::new();
-    assert_eq!(r.next(), None);
+    let r = EmptyRange::<i32>::new();
+    assert_eq!(r.into_iter().next(), None);
 }

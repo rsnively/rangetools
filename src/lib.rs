@@ -36,16 +36,17 @@
 //! use rangetools::Rangetools;
 //!
 //! let u1 = (1..3).union(5..7);
-//! assert_eq!(u1.collect::<Vec<_>>(), vec![1, 2, 5, 6]);
+//! assert_eq!(u1.into_iter().collect::<Vec<_>>(), vec![1, 2, 5, 6]);
 //!
 //! let u2 = (1..3).union(10..);
-//! assert_eq!(u2.take(5).collect::<Vec<_>>(), vec![1, 2, 10, 11, 12]);
+//! assert_eq!(u2.into_iter().take(5).collect::<Vec<_>>(), vec![1, 2, 10, 11, 12]);
 //!```
 //!
-//! ```ignored
+//! ```compile_fail
+//! # use rangetools::Rangetools;
 //! let u3 = (..5).union(10..);
-//! let v = u3.collect::<Vec<_>>(); // Compiler error! The resulting union does
-//!                                 // not have a lower bound.
+//! let i = u3.into_iter(); // Compiler error! The resulting union has no lower bound
+//!                         // and thus cannot be iterated over.
 //! ```
 
 mod bound;

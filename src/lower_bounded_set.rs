@@ -1,4 +1,9 @@
-use crate::{BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, Rangetools, Step};
+use std::iter::FusedIterator;
+
+use crate::{
+    BoundedRange, BoundedSet, BoundedSetIter, LowerBound, LowerBoundedRange, LowerBoundedRangeIter,
+    Rangetools, Step,
+};
 
 /// A set of ranges with a finite lower bound but no upper bound.
 ///
@@ -25,12 +30,17 @@ impl<T> From<LowerBoundedRange<T>> for LowerBoundedSet<T> {
     }
 }
 
-impl<T: Copy + Ord + Step> Iterator for LowerBoundedSet<T> {
+impl<T> IntoIterator for LowerBoundedSet<T>
+where
+    T: Copy + Ord + Step,
+{
+    type IntoIter = LowerBoundedSetIter<T>;
     type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.ranges
-            .next()
-            .or_else(|| self.lower_bounded_range.next())
+    fn into_iter(self) -> Self::IntoIter {
+        LowerBoundedSetIter {
+            set_iter: self.ranges.into_iter(),
+            range_iter: self.lower_bounded_range.into_iter(),
+        }
     }
 }
 
@@ -40,14 +50,14 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
             if self
                 .ranges
                 .ranges
-                .last()
+                .back()
                 .unwrap()
                 .intersection(self.lower_bounded_range)
                 .is_empty()
             {
                 return;
             } else {
-                let range = self.ranges.ranges.pop().unwrap();
+                let range = self.ranges.ranges.pop_back().unwrap();
                 self.lower_bounded_range.start = self.lower_bounded_range.start.min(range.start);
             }
         }
@@ -82,3 +92,32 @@ impl<T: Copy + Ord> LowerBoundedSet<T> {
         self.lower_bounded_range.contains(t) || self.ranges.contains(t)
     }
 }
+
+#[derive(Clone, Debug)]
+pub struct LowerBoundedSetIter<T> {
+    set_iter: BoundedSetIter<T>,
+    range_iter: LowerBoundedRangeIter<T>,
+}
+
+impl<T> Iterator for LowerBoundedSetIter<T>
+where
+    T: Copy + Ord + Step,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.set_iter.next().or_else(|| self.range_iter.next())
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (usize::MAX, None)
+    }
+
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.set_iter
+            .nth(n)
+            .or_else(|| self.range_iter.nth(n - self.set_iter.len()))
+    }
+}
+
+impl<T> FusedIterator for LowerBoundedSetIter<T> where T: Copy + Ord + Step {}

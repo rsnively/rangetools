@@ -1,3 +1,5 @@
+use std::iter::FusedIterator;
+
 use crate::{Bound, LowerBound, Step};
 
 /// A range only bounded below (either inclusive or exclusive).
@@ -22,6 +24,22 @@ impl<T> From<std::ops::RangeFrom<T>> for LowerBoundedRange<T> {
     fn from(r: std::ops::RangeFrom<T>) -> Self {
         Self {
             start: LowerBound::included(r.start),
+        }
+    }
+}
+
+impl<T> IntoIterator for LowerBoundedRange<T>
+where
+    T: Copy + Step,
+{
+    type IntoIter = LowerBoundedRangeIter<T>;
+    type Item = T;
+    fn into_iter(self) -> Self::IntoIter {
+        LowerBoundedRangeIter {
+            current: match self.start {
+                LowerBound(Bound::Excluded(t)) => t.next(),
+                LowerBound(Bound::Included(t)) => t,
+            },
         }
     }
 }
@@ -58,21 +76,31 @@ impl<T: Copy + Ord> LowerBoundedRange<T> {
     }
 }
 
-impl<T> Iterator for LowerBoundedRange<T>
+#[derive(Clone, Debug)]
+pub struct LowerBoundedRangeIter<T> {
+    current: T,
+}
+
+impl<T> Iterator for LowerBoundedRangeIter<T>
 where
-    T: Copy + Ord + Step,
+    T: Copy + Step,
 {
     type Item = T;
+
     fn next(&mut self) -> Option<Self::Item> {
-        match self.start.0 {
-            Bound::Excluded(t) => {
-                self.start = self.start.map(T::next);
-                Some(t.next())
-            }
-            Bound::Included(t) => {
-                self.start = self.start.map(T::next);
-                Some(t)
-            }
-        }
+        let t = self.current;
+        self.current = self.current.next();
+        Some(t)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (usize::MAX, None)
+    }
+
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.current = Step::forward(self.current, n);
+        self.next()
     }
 }
+
+impl<T> FusedIterator for LowerBoundedRangeIter<T> where T: Copy + Step {}

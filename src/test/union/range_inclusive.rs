@@ -3,7 +3,10 @@ use crate::{EmptyRange, Rangetools as _};
 #[test]
 fn range() {
     let u = (0..=2).union(5..7);
-    assert_eq!(u.clone().collect::<Vec<_>>(), vec![0, 1, 2, 5, 6]);
+    assert_eq!(
+        u.clone().into_iter().collect::<Vec<_>>(),
+        vec![0, 1, 2, 5, 6]
+    );
     assert!(u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -20,7 +23,10 @@ fn range() {
 #[test]
 fn range_from() {
     let u = (1..=2).union(2..);
-    assert_eq!(u.clone().take(3).collect::<Vec<_>>(), vec![1, 2, 3]);
+    assert_eq!(
+        u.clone().into_iter().take(3).collect::<Vec<_>>(),
+        vec![1, 2, 3]
+    );
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -49,7 +55,10 @@ fn range_full() {
 #[test]
 fn range_inclusive() {
     let u = (1..=2).union(5..=7);
-    assert_eq!(u.clone().collect::<Vec<_>>(), vec![1, 2, 5, 6, 7]);
+    assert_eq!(
+        u.clone().into_iter().collect::<Vec<_>>(),
+        vec![1, 2, 5, 6, 7]
+    );
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -97,7 +106,7 @@ fn range_to_inclusive() {
 fn bounded_range() {
     let r = (5..7).intersection(..);
     let u = (1..=2).union(r);
-    assert_eq!(u.clone().collect::<Vec<_>>(), vec![1, 2, 5, 6]);
+    assert_eq!(u.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 5, 6]);
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -116,7 +125,10 @@ fn bounded_range() {
 fn lower_bounded_range() {
     let r = (..).intersection(2..);
     let u = (1..=2).union(r);
-    assert_eq!(u.clone().take(5).collect::<Vec<_>>(), vec![1, 2, 3, 4, 5]);
+    assert_eq!(
+        u.clone().into_iter().take(5).collect::<Vec<_>>(),
+        vec![1, 2, 3, 4, 5]
+    );
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -169,7 +181,10 @@ fn empty_range() {
 fn bounded_set() {
     let s = (5..7).union(2..4);
     let u = (1..=2).union(s);
-    assert_eq!(u.clone().collect::<Vec<_>>(), vec![1, 2, 3, 5, 6]);
+    assert_eq!(
+        u.clone().into_iter().collect::<Vec<_>>(),
+        vec![1, 2, 3, 5, 6]
+    );
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));
@@ -188,7 +203,10 @@ fn bounded_set() {
 fn lower_bounded_set() {
     let s = (2..3).union(5..);
     let u = (1..=2).union(s);
-    assert_eq!(u.clone().take(5).collect::<Vec<_>>(), vec![1, 2, 5, 6, 7]);
+    assert_eq!(
+        u.clone().into_iter().take(5).collect::<Vec<_>>(),
+        vec![1, 2, 5, 6, 7]
+    );
     assert!(!u.contains(0));
     assert!(u.contains(1));
     assert!(u.contains(2));

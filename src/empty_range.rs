@@ -15,6 +15,14 @@ pub struct EmptyRange<T> {
     t: PhantomData<T>,
 }
 
+impl<T> IntoIterator for EmptyRange<T> {
+    type IntoIter = std::iter::Empty<T>;
+    type Item = T;
+    fn into_iter(self) -> Self::IntoIter {
+        std::iter::empty()
+    }
+}
+
 impl<T> EmptyRange<T> {
     /// Constructs a new `EmptyRange`.
     ///
@@ -46,12 +54,5 @@ impl<T> EmptyRange<T> {
     /// ```
     pub fn contains(&self, _: T) -> bool {
         false
-    }
-}
-
-impl<T> Iterator for EmptyRange<T> {
-    type Item = T;
-    fn next(&mut self) -> Option<Self::Item> {
-        None
     }
 }

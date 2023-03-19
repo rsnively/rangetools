@@ -1,3 +1,5 @@
+use std::iter::FusedIterator;
+
 use crate::{Bound, LowerBound, Rangetools, Step, UpperBound};
 
 /// A range bounded both below and above (either inclusive or exclusive).
@@ -41,6 +43,25 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
             start: LowerBound::included(start),
             end: UpperBound::included(end),
         }
+    }
+}
+
+impl<T> IntoIterator for BoundedRange<T>
+where
+    T: Copy + Ord + Step,
+{
+    type IntoIter = BoundedRangeIter<T>;
+    type Item = T;
+    fn into_iter(self) -> Self::IntoIter {
+        let current = match self.start {
+            LowerBound(Bound::Excluded(t)) => t.next(),
+            LowerBound(Bound::Included(t)) => t,
+        };
+        let last = match self.end {
+            UpperBound(Bound::Excluded(t)) => t.prev(),
+            UpperBound(Bound::Included(t)) => t,
+        };
+        BoundedRangeIter { current, last }
     }
 }
 
@@ -95,34 +116,76 @@ impl<T: Copy + Ord> BoundedRange<T> {
     }
 }
 
-impl<T> Iterator for BoundedRange<T>
+#[derive(Clone, Debug)]
+pub struct BoundedRangeIter<T> {
+    current: T,
+    last: T,
+}
+
+impl<T> Iterator for BoundedRangeIter<T>
 where
     T: Copy + Ord + Step,
 {
     type Item = T;
+
     fn next(&mut self) -> Option<Self::Item> {
-        if self.is_empty() {
+        if self.current > self.last {
             None
         } else {
-            match (self.start.0, self.end.0) {
-                (Bound::Included(start), _) => {
-                    self.start = self.start.map(T::next);
-                    Some(start)
-                }
-                (Bound::Excluded(start), Bound::Included(_)) => {
-                    self.start = self.start.map(T::next);
-                    Some(start.next())
-                }
-                (Bound::Excluded(start), Bound::Excluded(end)) => {
-                    let next = start.next();
-                    if next >= end {
-                        None
-                    } else {
-                        self.start = self.start.map(T::next);
-                        Some(next)
-                    }
-                }
-            }
+            let t = self.current;
+            self.current = self.current.next();
+            Some(t)
         }
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let size = Step::steps_between(&self.current, &self.last)
+            .map(|steps| steps + 1)
+            .unwrap_or_default();
+        (size, Some(size))
+    }
+
+    fn count(self) -> usize {
+        self.len()
+    }
+
+    fn last(self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        if self.current > self.last {
+            None
+        } else {
+            Some(self.last)
+        }
+    }
+
+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
+        self.current = Step::forward(self.current, n);
+        self.next()
+    }
 }
+
+impl<T> DoubleEndedIterator for BoundedRangeIter<T>
+where
+    T: Copy + Ord + Step,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if self.current > self.last {
+            None
+        } else {
+            let t = self.last;
+            self.last = self.current.prev();
+            Some(t)
+        }
+    }
+
+    fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+        self.last = Step::backward(self.last, n);
+        self.next_back()
+    }
+}
+
+impl<T> ExactSizeIterator for BoundedRangeIter<T> where T: Copy + Ord + Step {}
+
+impl<T> FusedIterator for BoundedRangeIter<T> where T: Copy + Ord + Step {}

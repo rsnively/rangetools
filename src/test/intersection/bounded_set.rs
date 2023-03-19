@@ -4,7 +4,7 @@ use crate::{EmptyRange, Rangetools as _};
 fn range() {
     let s = (1..3).union(4..6);
     let i = s.clone().intersection(2..6);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -20,7 +20,7 @@ fn range() {
 fn range_from() {
     let s = (1..3).union(4..6);
     let i = s.clone().intersection(2..);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -36,7 +36,7 @@ fn range_from() {
 fn range_full() {
     let s = (1..3).union(4..=5);
     let i = s.intersection(..);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));
@@ -52,7 +52,7 @@ fn range_full() {
 fn range_inclusive() {
     let s = (1..3).union(4..6);
     let i = s.clone().intersection(2..=5);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -68,7 +68,7 @@ fn range_inclusive() {
 fn range_to() {
     let s = (1..3).union(4..6);
     let i = s.clone().intersection(..5);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 4]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 4]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));
@@ -84,7 +84,7 @@ fn range_to() {
 fn range_to_inclusive() {
     let s = (1..3).union(4..6);
     let i = s.clone().intersection(..=5);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));
@@ -101,7 +101,7 @@ fn bounded_range() {
     let s = (1..3).union(4..6);
     let r = (2..6).intersection(..);
     let i = s.clone().intersection(r);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -119,7 +119,7 @@ fn lower_bounded_range() {
     let s = (1..3).union(4..6);
     let r = (2..).intersection(1..);
     let i = s.clone().intersection(r);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -137,7 +137,7 @@ fn upper_bounded_range() {
     let s = (1..3).union(4..6);
     let r = (..5).intersection(..6);
     let i = s.clone().intersection(r);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 4]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 4]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));
@@ -155,7 +155,7 @@ fn unbounded_range() {
     let s = (1..3).union(4..=5);
     let r = (..).to_inner();
     let i = s.intersection(r);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 4, 5]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));
@@ -173,7 +173,7 @@ fn empty_range() {
     let r = EmptyRange::new();
     let i = s.intersection(r);
     assert!(i.is_empty());
-    assert_eq!(i.collect::<Vec<_>>(), vec![]);
+    assert_eq!(i.into_iter().collect::<Vec<_>>(), vec![]);
 }
 
 #[test]
@@ -181,7 +181,7 @@ fn bounded_set() {
     let s1 = (1..3).union(4..6);
     let s2 = (2..=2).union(4..5);
     let i = s1.clone().intersection(s2);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -199,7 +199,7 @@ fn lower_bounded_set() {
     let s1 = (1..3).union(4..6);
     let s2 = (2..).union(3..);
     let i = s1.clone().intersection(s2);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![2, 4, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![2, 4, 5]);
     assert!(!i.contains(0));
     assert!(!i.contains(1));
     assert!(i.contains(2));
@@ -217,7 +217,7 @@ fn upper_bounded_set() {
     let s1 = (1..2).union(3..5);
     let s2 = (..3).union(4..6);
     let i = s1.clone().intersection(s2);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 4]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 4]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(!i.contains(2));
@@ -235,7 +235,7 @@ fn unbounded_set() {
     let s = (1..3).union(4..=5);
     let r = (..=1).union(2..3).union(5..);
     let i = s.clone().intersection(r);
-    assert_eq!(i.clone().collect::<Vec<_>>(), vec![1, 2, 5]);
+    assert_eq!(i.clone().into_iter().collect::<Vec<_>>(), vec![1, 2, 5]);
     assert!(!i.contains(0));
     assert!(i.contains(1));
     assert!(i.contains(2));

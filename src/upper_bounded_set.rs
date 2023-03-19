@@ -31,14 +31,14 @@ impl<T: Copy + Ord> UpperBoundedSet<T> {
             if self
                 .ranges
                 .ranges
-                .first()
+                .front()
                 .unwrap()
                 .intersection(self.upper_bounded_range)
                 .is_empty()
             {
                 return;
             } else {
-                let range = self.ranges.ranges.remove(0);
+                let range = self.ranges.ranges.pop_front().unwrap();
                 self.upper_bounded_range.end = self.upper_bounded_range.end.max(range.end);
             }
         }
