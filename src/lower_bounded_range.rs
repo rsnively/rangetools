@@ -37,7 +37,7 @@ where
     fn into_iter(self) -> Self::IntoIter {
         LowerBoundedRangeIter {
             current: match self.start {
-                LowerBound(Bound::Excluded(t)) => t.next(),
+                LowerBound(Bound::Excluded(t)) => Step::forward(t, 1),
                 LowerBound(Bound::Included(t)) => t,
             },
         }
@@ -89,7 +89,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         let t = self.current;
-        self.current = self.current.next();
+        self.current = Step::forward(self.current, 1);
         Some(t)
     }
 

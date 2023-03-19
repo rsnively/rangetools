@@ -54,11 +54,11 @@ where
     type Item = T;
     fn into_iter(self) -> Self::IntoIter {
         let current = match self.start {
-            LowerBound(Bound::Excluded(t)) => t.next(),
+            LowerBound(Bound::Excluded(t)) => Step::forward(t, 1),
             LowerBound(Bound::Included(t)) => t,
         };
         let last = match self.end {
-            UpperBound(Bound::Excluded(t)) => t.prev(),
+            UpperBound(Bound::Excluded(t)) => Step::backward(t, 1),
             UpperBound(Bound::Included(t)) => t,
         };
         BoundedRangeIter { current, last }
@@ -133,7 +133,7 @@ where
             None
         } else {
             let t = self.current;
-            self.current = self.current.next();
+            self.current = Step::forward(self.current, 1);
             Some(t)
         }
     }
@@ -175,7 +175,7 @@ where
             None
         } else {
             let t = self.last;
-            self.last = self.last.prev();
+            self.last = Step::backward(self.last, 1);
             Some(t)
         }
     }
