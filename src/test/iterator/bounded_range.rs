@@ -110,6 +110,42 @@ fn nth() {
 }
 
 #[test]
+fn min() {
+    let r1 = BoundedRange::new(LowerBound::excluded(5), UpperBound::excluded(10));
+    assert_eq!(r1.into_iter().min(), Some(6));
+
+    let r2 = BoundedRange::new(LowerBound::included(5), UpperBound::excluded(10));
+    assert_eq!(r2.into_iter().min(), Some(5));
+
+    let r3 = BoundedRange::new(LowerBound::excluded(5), UpperBound::included(10));
+    assert_eq!(r3.into_iter().min(), Some(6));
+
+    let r4 = BoundedRange::new(LowerBound::included(5), UpperBound::included(10));
+    assert_eq!(r4.into_iter().min(), Some(5));
+
+    let r5: BoundedRange<i32> = (0..10).intersection(10..20);
+    assert_eq!(r5.into_iter().min(), None);
+}
+
+#[test]
+fn max() {
+    let r1 = BoundedRange::new(LowerBound::excluded(5), UpperBound::excluded(10));
+    assert_eq!(r1.into_iter().max(), Some(9));
+
+    let r2 = BoundedRange::new(LowerBound::included(5), UpperBound::excluded(10));
+    assert_eq!(r2.into_iter().max(), Some(9));
+
+    let r3 = BoundedRange::new(LowerBound::excluded(5), UpperBound::included(10));
+    assert_eq!(r3.into_iter().max(), Some(10));
+
+    let r4 = BoundedRange::new(LowerBound::included(5), UpperBound::included(10));
+    assert_eq!(r4.into_iter().max(), Some(10));
+
+    let r5: BoundedRange<i32> = (0..10).intersection(10..20);
+    assert_eq!(r5.into_iter().max(), None);
+}
+
+#[test]
 fn next_back() {
     let r1 = BoundedRange::new(LowerBound::excluded(5), UpperBound::excluded(7));
     let mut i1 = r1.into_iter();

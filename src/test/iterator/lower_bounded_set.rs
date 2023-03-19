@@ -35,3 +35,12 @@ fn nth() {
     assert_eq!(i2.nth(1), Some(4));
     assert_eq!(i2.nth(2), Some(7));
 }
+
+#[test]
+fn min() {
+    let s1: LowerBoundedSet<i32> = (4..).union(BoundedSet::empty());
+    assert_eq!(s1.into_iter().min(), Some(4));
+
+    let s2: LowerBoundedSet<i32> = (1..2).union(4..);
+    assert_eq!(s2.into_iter().min(), Some(1));
+}

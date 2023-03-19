@@ -112,6 +112,13 @@ where
         self.current = Step::forward(self.current, n);
         self.next()
     }
+
+    fn min(mut self) -> Option<Self::Item>
+    where
+        Self::Item: Ord,
+    {
+        self.next()
+    }
 }
 
 impl<T> FusedIterator for LowerBoundedRangeIter<T> where T: Copy + Step {}

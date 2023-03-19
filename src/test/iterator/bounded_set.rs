@@ -50,6 +50,24 @@ fn nth() {
 }
 
 #[test]
+fn min() {
+    let s1: BoundedSet<i32> = (0..1).union(3..4);
+    assert_eq!(s1.into_iter().min(), Some(0));
+
+    let s2: BoundedSet<i32> = BoundedSet::empty();
+    assert_eq!(s2.into_iter().min(), None);
+}
+
+#[test]
+fn max() {
+    let s1: BoundedSet<i32> = (0..1).union(3..4);
+    assert_eq!(s1.into_iter().max(), Some(3));
+
+    let s2: BoundedSet<i32> = BoundedSet::empty();
+    assert_eq!(s2.into_iter().max(), None);
+}
+
+#[test]
 fn next_back() {
     let s1: BoundedSet<i32> = (0..1).union(3..4);
     let mut i1 = s1.into_iter();

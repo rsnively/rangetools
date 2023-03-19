@@ -130,6 +130,10 @@ where
             .nth(n)
             .or_else(|| self.range_iter.nth(n - bounded_size))
     }
+
+    fn min(mut self) -> Option<Self::Item> {
+        self.next()
+    }
 }
 
 impl<T> FusedIterator for LowerBoundedSetIter<T> where T: Copy + Ord + Step {}

@@ -175,6 +175,14 @@ where
         self.current = Step::forward(self.current, n);
         self.next()
     }
+
+    fn min(mut self) -> Option<Self::Item> {
+        self.next()
+    }
+
+    fn max(mut self) -> Option<Self::Item> {
+        self.next_back()
+    }
 }
 
 impl<T> DoubleEndedIterator for BoundedRangeIter<T>

@@ -39,3 +39,12 @@ fn nth() {
     assert_eq!(i2.nth(2), Some(6));
     assert_eq!(i2.nth(3), Some(10));
 }
+
+#[test]
+fn min() {
+    let r1 = LowerBoundedRange::new(LowerBound::excluded(2));
+    assert_eq!(r1.into_iter().min(), Some(3));
+
+    let r2 = LowerBoundedRange::new(LowerBound::included(2));
+    assert_eq!(r2.into_iter().min(), Some(2));
+}

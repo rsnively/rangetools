@@ -168,6 +168,14 @@ where
         }
         self.range_iters.front_mut().map(|i| i.nth(n)).flatten()
     }
+
+    fn min(mut self) -> Option<Self::Item> {
+        self.next()
+    }
+
+    fn max(mut self) -> Option<Self::Item> {
+        self.next_back()
+    }
 }
 
 impl<T> DoubleEndedIterator for BoundedSetIter<T>
