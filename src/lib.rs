@@ -16,7 +16,7 @@
 //! ```
 //!
 //! This provides new methods on all of the above types, as well as any
-//! types introduced in this crate to manage the outputs of the such methods.
+//! types introduced in this crate to manage the outputs of such methods.
 //!
 //! ```
 //! use rangetools::Rangetools;
@@ -44,9 +44,9 @@
 //!
 //! ```compile_fail
 //! # use rangetools::Rangetools;
-//! let u3 = (..5).union(10..);
-//! let i = u3.into_iter(); // Compiler error! The resulting union has no lower bound
-//!                         // and thus cannot be iterated over.
+//! let c = (1..3).complement();
+//! let i = c.into_iter(); // Compiler error! The result has no lower bound
+//!                        // and thus cannot be iterated over.
 //! ```
 //!
 //! # Crate features
