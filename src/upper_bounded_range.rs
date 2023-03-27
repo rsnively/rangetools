@@ -1,4 +1,6 @@
 use crate::{Bound, UpperBound};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// A range only bounded above (either inclusive or exclusive).
 ///
@@ -13,6 +15,7 @@ use crate::{Bound, UpperBound};
 /// assert_eq!(i, UpperBoundedRange { end: UpperBound::included(3) });
 /// ```
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct UpperBoundedRange<T> {
     /// The upper bound of the range (can be inclusive or exclusive).
     pub end: UpperBound<T>,

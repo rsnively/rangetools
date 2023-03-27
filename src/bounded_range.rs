@@ -1,6 +1,7 @@
-use std::iter::FusedIterator;
-
 use crate::{Bound, LowerBound, Rangetools, Step, UpperBound};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::iter::FusedIterator;
 
 /// A range bounded both below and above (either inclusive or exclusive).
 ///
@@ -20,6 +21,7 @@ use crate::{Bound, LowerBound, Rangetools, Step, UpperBound};
 /// with start bound `Bound::Excluded(3)` and end bound `Bound::Excluded(4)` is not considered
 /// empty even though it doesn't contain any values.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct BoundedRange<T> {
     /// The lower bound of the range (can be inclusive or exclusive).
     pub start: LowerBound<T>,

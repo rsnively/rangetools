@@ -48,6 +48,11 @@
 //! let i = u3.into_iter(); // Compiler error! The resulting union has no lower bound
 //!                         // and thus cannot be iterated over.
 //! ```
+//!
+//! # Crate features
+//!
+//! **serde** - When enabled, derives [`serde`]'s [Serialize](serde::Serialize) and [Deserialize](serde::Deserialize) traits for
+//! all of the types introduced in this crate.
 
 mod bound;
 mod bounded_range;

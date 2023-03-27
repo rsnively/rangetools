@@ -1,3 +1,6 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// A range with no upper or lower bound.
 ///
 /// Generalizes over [`std::ops::RangeFull`].
@@ -11,6 +14,7 @@
 /// assert_eq!(i, UnboundedRange {});
 /// ```
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct UnboundedRange {}
 
 impl From<std::ops::RangeFull> for UnboundedRange {

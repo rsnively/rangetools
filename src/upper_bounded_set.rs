@@ -1,4 +1,6 @@
 use crate::{BoundedRange, BoundedSet, Rangetools, UpperBound, UpperBoundedRange};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// A set of ranges with a finite upper bound but no lower bound.
 ///
@@ -10,6 +12,7 @@ use crate::{BoundedRange, BoundedSet, Rangetools, UpperBound, UpperBoundedRange}
 /// let s: UpperBoundedSet<_> = (10..20).union(..5);
 /// ```
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct UpperBoundedSet<T> {
     /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,

@@ -1,9 +1,10 @@
-use std::iter::FusedIterator;
-
 use crate::{
     BoundedRange, BoundedSet, BoundedSetIter, LowerBound, LowerBoundedRange, LowerBoundedRangeIter,
     Rangetools, Step,
 };
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::iter::FusedIterator;
 
 /// A set of ranges with a finite lower bound but no upper bound.
 ///
@@ -15,6 +16,7 @@ use crate::{
 /// let s: LowerBoundedSet<_> = (0..3).union(5..);
 /// ```
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct LowerBoundedSet<T> {
     /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) ranges: BoundedSet<T>,

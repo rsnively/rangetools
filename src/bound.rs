@@ -1,9 +1,13 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// Endpoints of a closed range.
 ///
 /// A replacement for [`std::ops::Bound`], which can be unwieldy with copy types. More significantly,
 /// it codifies the closed nature of the bounds in the type system for tracking whether a range is
 /// iterable or not.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum Bound<T> {
     /// An excluded bound.
     Excluded(T),
@@ -56,6 +60,7 @@ impl<T> Bound<T> {
 ///
 /// Specialization of [`Bound`] where comparisons make sense in all contexts.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct LowerBound<T>(pub(crate) Bound<T>);
 
 impl<T> From<Bound<T>> for LowerBound<T> {
@@ -145,6 +150,7 @@ impl<T> LowerBound<T> {
 ///
 /// Specialization of [`Bound`] where comparisons make sense in all contexts.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct UpperBound<T>(pub(crate) Bound<T>);
 
 impl<T> From<Bound<T>> for UpperBound<T> {

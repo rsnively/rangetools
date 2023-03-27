@@ -2,6 +2,8 @@ use crate::{
     BoundedRange, BoundedSet, LowerBound, LowerBoundedRange, RangeIntersection, Rangetools,
     UnboundedRange, UpperBound, UpperBoundedRange,
 };
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 /// A set of ranges with ultimately no upper or lower bound.
 ///
@@ -18,6 +20,7 @@ use crate::{
 /// assert!(piecewise.contains(42));
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct PiecewiseUnboundedSet<T> {
     /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) upper_bounded_range: UpperBoundedRange<T>,
@@ -78,6 +81,7 @@ impl<T: Copy + Ord> PiecewiseUnboundedSet<T> {
 /// assert_eq!(full, UnboundedSet::Full);
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum UnboundedSet<T> {
     /// Denotes an `UnboundedSet` containing all possible values of T.
     Full,

@@ -1,3 +1,5 @@
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 
 /// A range with no elements.
@@ -11,6 +13,7 @@ use std::marker::PhantomData;
 /// but we'd like to provide an "empty" range type for operations that'll come up
 /// when doing Rangetools calculations.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct EmptyRange<T> {
     t: PhantomData<T>,
 }

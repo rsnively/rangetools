@@ -1,6 +1,7 @@
-use std::iter::FusedIterator;
-
 use crate::{Bound, LowerBound, Step};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::iter::FusedIterator;
 
 /// A range only bounded below (either inclusive or exclusive).
 ///
@@ -15,6 +16,7 @@ use crate::{Bound, LowerBound, Step};
 /// assert_eq!(i, LowerBoundedRange { start: LowerBound::included(10) });
 /// ```
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct LowerBoundedRange<T> {
     /// The lower bound of the range (can be inclusive or exclusive).
     pub start: LowerBound<T>,

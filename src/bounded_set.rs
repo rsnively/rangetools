@@ -1,6 +1,7 @@
-use std::{collections::VecDeque, iter::FusedIterator};
-
 use crate::{BoundedRange, BoundedRangeIter, Rangetools, Step};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+use std::{collections::VecDeque, iter::FusedIterator};
 
 /// A set of ranges ultimately bounded both below and above.
 ///
@@ -12,6 +13,7 @@ use crate::{BoundedRange, BoundedRangeIter, Rangetools, Step};
 /// let s: BoundedSet<_> = (0..3).union(3..5);
 /// ```
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct BoundedSet<T> {
     /// Kept private to enforce the invariant that the ranges be non-empty and non-overlapping.
     pub(crate) ranges: VecDeque<BoundedRange<T>>,

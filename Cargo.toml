@@ -12,3 +12,4 @@ repository = "https://github.com/rsnively/rangetools"
 version = "0.1.2"
 
 [dependencies]
+serde = { version = "1.0.158", features = ["derive"], optional = true }
