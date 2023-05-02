@@ -30,6 +30,18 @@ impl<T> From<std::ops::RangeFrom<T>> for LowerBoundedRange<T> {
     }
 }
 
+impl<T> From<LowerBoundedRange<T>> for std::ops::RangeFrom<T>
+where
+    T: Copy + Step,
+{
+    fn from(r: LowerBoundedRange<T>) -> Self {
+        match r.start.to_bound() {
+            Bound::Excluded(t) => Step::forward(t, 1)..,
+            Bound::Included(t) => t..,
+        }
+    }
+}
+
 impl<T> IntoIterator for LowerBoundedRange<T>
 where
     T: Copy + Step,

@@ -1,4 +1,4 @@
-use crate::{Bound, UpperBound};
+use crate::{Bound, Step, UpperBound};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -33,6 +33,30 @@ impl<T> From<std::ops::RangeToInclusive<T>> for UpperBoundedRange<T> {
     fn from(r: std::ops::RangeToInclusive<T>) -> Self {
         Self {
             end: UpperBound::included(r.end),
+        }
+    }
+}
+
+impl<T> From<UpperBoundedRange<T>> for std::ops::RangeTo<T>
+where
+    T: Copy + Step,
+{
+    fn from(r: UpperBoundedRange<T>) -> Self {
+        match r.end.to_bound() {
+            Bound::Excluded(t) => ..t,
+            Bound::Included(t) => ..Step::forward(t, 1),
+        }
+    }
+}
+
+impl<T> From<UpperBoundedRange<T>> for std::ops::RangeToInclusive<T>
+where
+    T: Copy + Step,
+{
+    fn from(r: UpperBoundedRange<T>) -> Self {
+        match r.end.to_bound() {
+            Bound::Excluded(t) => ..=Step::backward(t, 1),
+            Bound::Included(t) => ..=t,
         }
     }
 }

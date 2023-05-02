@@ -1,3 +1,4 @@
+use crate::{BoundedRange, LowerBound, Step, UpperBound};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
@@ -16,6 +17,28 @@ use std::marker::PhantomData;
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub struct EmptyRange<T> {
     t: PhantomData<T>,
+}
+
+impl<T> From<EmptyRange<T>> for std::ops::Range<T>
+where
+    T: Default,
+{
+    fn from(_r: EmptyRange<T>) -> Self {
+        Default::default()
+    }
+}
+
+impl<T> From<EmptyRange<T>> for std::ops::RangeInclusive<T>
+where
+    T: Copy + Default + Step,
+{
+    fn from(_: EmptyRange<T>) -> Self {
+        let r = BoundedRange {
+            start: LowerBound::included(T::default()),
+            end: UpperBound::excluded(T::default()),
+        };
+        r.into()
+    }
 }
 
 impl<T> IntoIterator for EmptyRange<T> {

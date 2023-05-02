@@ -48,6 +48,40 @@ impl<T> From<std::ops::RangeInclusive<T>> for BoundedRange<T> {
     }
 }
 
+impl<T> From<BoundedRange<T>> for std::ops::Range<T>
+where
+    T: Copy + Step,
+{
+    fn from(r: BoundedRange<T>) -> Self {
+        let start = match r.start.to_bound() {
+            Bound::Excluded(t) => Step::forward(t, 1),
+            Bound::Included(t) => t,
+        };
+        let end = match r.end.to_bound() {
+            Bound::Excluded(t) => t,
+            Bound::Included(t) => Step::forward(t, 1),
+        };
+        start..end
+    }
+}
+
+impl<T> From<BoundedRange<T>> for std::ops::RangeInclusive<T>
+where
+    T: Copy + Step,
+{
+    fn from(r: BoundedRange<T>) -> Self {
+        let start = match r.start.to_bound() {
+            Bound::Excluded(t) => Step::forward(t, 1),
+            Bound::Included(t) => t,
+        };
+        let end = match r.end.to_bound() {
+            Bound::Excluded(t) => Step::backward(t, 1),
+            Bound::Included(t) => t,
+        };
+        start..=end
+    }
+}
+
 impl<T> IntoIterator for BoundedRange<T>
 where
     T: Copy + Ord + Step,

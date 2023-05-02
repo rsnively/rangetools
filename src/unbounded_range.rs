@@ -23,6 +23,12 @@ impl From<std::ops::RangeFull> for UnboundedRange {
     }
 }
 
+impl From<UnboundedRange> for std::ops::RangeFull {
+    fn from(_: UnboundedRange) -> Self {
+        Self
+    }
+}
+
 impl UnboundedRange {
     /// Constructs a new `UnboundedRange`.
     ///
