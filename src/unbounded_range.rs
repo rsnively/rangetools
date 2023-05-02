@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 /// ```
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
-pub struct UnboundedRange {}
+pub struct UnboundedRange;
 
 impl From<std::ops::RangeFull> for UnboundedRange {
     fn from(_: std::ops::RangeFull) -> Self {
-        Self {}
+        Self
     }
 }
 
@@ -34,7 +34,7 @@ impl UnboundedRange {
     /// assert!(r.contains(42));
     /// ```
     pub fn new() -> Self {
-        Self {}
+        Self
     }
 
     /// Returns true if the range contains the given item.
