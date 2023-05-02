@@ -128,6 +128,17 @@ impl<T> LowerBound<T> {
         Self(Bound::Included(t))
     }
 
+    /// Get the inner bound value.
+    ///
+    /// Be careful when performing operations on raw bounds, as they can have different meanings
+    /// depending on their original context.
+    pub fn to_bound(self) -> Bound<T>
+    where
+        T: Copy,
+    {
+        self.0
+    }
+
     /// Maps a `LowerBound<T>` to a `LowerBound<U>` by applying a function to the contained value.
     ///
     /// # Example
@@ -216,6 +227,17 @@ impl<T> UpperBound<T> {
     /// ```
     pub fn included(t: T) -> Self {
         Self(Bound::Included(t))
+    }
+
+    /// Get the inner bound value.
+    ///
+    /// Be careful when performing operations on raw bounds, as they can have different meanings
+    /// depending on their original context.
+    pub fn to_bound(self) -> Bound<T>
+    where
+        T: Copy,
+    {
+        self.0
     }
 
     /// Maps an `UpperBound<T>` to an `UpperBound<U>` by applying a function to the contained value.
